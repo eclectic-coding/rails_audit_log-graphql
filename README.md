@@ -1,5 +1,11 @@
 # RailsAuditLog::Graphql
 
+[![CI](https://github.com/eclectic-coding/rails_audit_log-graphql/actions/workflows/main.yml/badge.svg)](https://github.com/eclectic-coding/rails_audit_log-graphql/actions/workflows/main.yml)
+[![Gem Version](https://img.shields.io/gem/v/rails_audit_log-graphql)](https://rubygems.org/gems/rails_audit_log-graphql)
+[![Total Downloads](https://img.shields.io/gem/dt/rails_audit_log-graphql)](https://rubygems.org/gems/rails_audit_log-graphql)
+[![Ruby](https://img.shields.io/badge/ruby-%3E%3D%203.3-CC342D)](https://www.ruby-lang.org)
+[![codecov](https://codecov.io/gh/eclectic-coding/rails_audit_log-graphql/graph/badge.svg)](https://codecov.io/gh/eclectic-coding/rails_audit_log-graphql)
+
 TODO: Delete this and the text below, and describe your gem
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rails_audit_log/graphql`. To experiment with that code, run `bin/console` for an interactive prompt.
