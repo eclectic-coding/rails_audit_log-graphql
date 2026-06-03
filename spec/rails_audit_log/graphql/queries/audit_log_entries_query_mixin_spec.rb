@@ -79,4 +79,67 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       end
     end
   end
+
+  describe "resolver methods" do
+    let(:resolver) do
+      Object.new.tap { |o| o.extend(described_class) }
+    end
+
+    let(:scope) { double("scope") }
+
+    before do
+      stub_const("RailsAuditLog::AuditLogEntry", Class.new)
+      allow(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :desc).and_return(scope)
+      allow(scope).to receive(:where).and_return(scope)
+      allow(scope).to receive(:limit).and_return(scope)
+      allow(scope).to receive(:offset).and_return(scope)
+    end
+
+    describe "#resolve_audit_log_entry" do
+      it "finds entry by id" do
+        entry = double("entry")
+        allow(RailsAuditLog::AuditLogEntry).to receive(:find_by).with(id: "1").and_return(entry)
+        expect(resolver.resolve_audit_log_entry(id: "1")).to eq(entry)
+      end
+
+      it "returns nil when not found" do
+        allow(RailsAuditLog::AuditLogEntry).to receive(:find_by).and_return(nil)
+        expect(resolver.resolve_audit_log_entry(id: "999")).to be_nil
+      end
+    end
+
+    describe "#resolve_audit_log_entries" do
+      it "applies default pagination (page 1, per_page 25)" do
+        expect(scope).to receive(:limit).with(25).and_return(scope)
+        expect(scope).to receive(:offset).with(0).and_return(scope)
+        resolver.resolve_audit_log_entries
+      end
+
+      it "filters by event" do
+        expect(scope).to receive(:where).with(event: "create").and_return(scope)
+        resolver.resolve_audit_log_entries(event: "create")
+      end
+
+      it "filters by item_type" do
+        expect(scope).to receive(:where).with(item_type: "Article").and_return(scope)
+        resolver.resolve_audit_log_entries(item_type: "Article")
+      end
+
+      it "filters by item_id" do
+        expect(scope).to receive(:where).with(item_id: "42").and_return(scope)
+        resolver.resolve_audit_log_entries(item_id: "42")
+      end
+
+      it "filters by actor_id" do
+        expect(scope).to receive(:where).with(actor_id: "7").and_return(scope)
+        resolver.resolve_audit_log_entries(actor_id: "7")
+      end
+
+      it "calculates offset correctly for page 2" do
+        expect(scope).to receive(:limit).with(10).and_return(scope)
+        expect(scope).to receive(:offset).with(10).and_return(scope)
+        resolver.resolve_audit_log_entries(page: 2, per_page: 10)
+      end
+    end
+  end
 end
