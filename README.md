@@ -79,9 +79,24 @@ end
 
 Fetch a single entry by ID. Returns `nil` if not found.
 
-#### `auditLogEntries(...): AuditLogEntryConnection!`
+#### `auditLogEntries(...): [AuditLogEntry!]!`
 
-List entries with optional filters. Returns a [Relay-style connection](https://relay.dev/graphql/connections.htm) for cursor-based pagination.
+List entries with optional filters and offset pagination.
+
+| Argument | Type | Default | Description |
+|---|---|---|---|
+| `event` | `String` | — | Filter by event type (`create`, `update`, `destroy`) |
+| `itemType` | `String` | — | Filter by audited model class name |
+| `itemId` | `ID` | — | Filter by audited record ID |
+| `actorId` | `ID` | — | Filter by actor ID |
+| `page` | `Int` | `1` | Page number (1-based) |
+| `perPage` | `Int` | `25` | Results per page |
+
+Results are ordered by `created_at DESC`.
+
+#### `auditLogEntriesConnection(...): AuditLogEntryConnection!`
+
+Same filters as `auditLogEntries`, but returns a [Relay-style connection](https://relay.dev/graphql/connections.htm) for cursor-based pagination.
 
 | Argument | Type | Description |
 |---|---|---|
@@ -100,7 +115,7 @@ Results are ordered by `created_at DESC`.
 
 ```graphql
 {
-  auditLogEntries(first: 25) {
+  auditLogEntriesConnection(first: 25) {
     nodes {
       id
       event
@@ -120,7 +135,7 @@ Results are ordered by `created_at DESC`.
 
 ```graphql
 {
-  auditLogEntries(first: 25, after: "eyJpZCI6NDJ9") {
+  auditLogEntriesConnection(first: 25, after: "eyJpZCI6NDJ9") {
     nodes { id event }
     pageInfo { hasNextPage endCursor }
   }
