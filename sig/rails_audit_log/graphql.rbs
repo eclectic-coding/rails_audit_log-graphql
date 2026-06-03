@@ -22,9 +22,43 @@ module RailsAuditLog
     module Queries
       module AuditLogEntriesQueryMixin
         def self.included: (untyped base) -> void
+
         def resolve_audit_log_entry: (id: String) -> untyped
-        def resolve_audit_log_entries: (?event: String?, ?item_type: String?, ?item_id: String?, ?actor_id: String?, ?page: Integer, ?per_page: Integer) -> untyped
+
+        def resolve_audit_log_entries: (
+          ?event: String?,
+          ?item_type: String?,
+          ?item_id: String?,
+          ?actor_id: String?,
+          ?since: Time?,
+          ?until_time: Time?,
+          ?touching: String?,
+          ?page: Integer,
+          ?per_page: Integer
+        ) -> untyped
+
+        def resolve_audit_log_entries_connection: (
+          ?event: String?,
+          ?item_type: String?,
+          ?item_id: String?,
+          ?actor_id: String?,
+          ?since: Time?,
+          ?until_time: Time?,
+          ?touching: String?
+        ) -> untyped
+
         private
+
+        def build_scope: (
+          ?event: String?,
+          ?item_type: String?,
+          ?item_id: String?,
+          ?actor_id: String?,
+          ?since: Time?,
+          ?until_time: Time?,
+          ?touching: String?
+        ) -> untyped
+
         def check_authentication!: () -> void
       end
     end
