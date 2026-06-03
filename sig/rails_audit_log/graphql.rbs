@@ -8,6 +8,19 @@ module RailsAuditLog
 
       class AuditLogEntryType < BaseObject
       end
+
+      class SortDirectionEnum < GraphQL::Schema::Enum
+      end
+
+      class AuditLogEntrySortFieldEnum < GraphQL::Schema::Enum
+      end
+    end
+
+    module InputObjects
+      class AuditLogEntrySortInput < GraphQL::Schema::InputObject
+        def field: () -> Symbol
+        def direction: () -> Symbol
+      end
     end
 
     module Generators
@@ -33,6 +46,7 @@ module RailsAuditLog
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
+          ?order_by: InputObjects::AuditLogEntrySortInput?,
           ?page: Integer,
           ?per_page: Integer
         ) -> untyped
@@ -44,7 +58,8 @@ module RailsAuditLog
           ?actor_id: String?,
           ?since: Time?,
           ?until_time: Time?,
-          ?touching: String?
+          ?touching: String?,
+          ?order_by: InputObjects::AuditLogEntrySortInput?
         ) -> untyped
 
         private
@@ -56,7 +71,8 @@ module RailsAuditLog
           ?actor_id: String?,
           ?since: Time?,
           ?until_time: Time?,
-          ?touching: String?
+          ?touching: String?,
+          ?order_by: InputObjects::AuditLogEntrySortInput?
         ) -> untyped
 
         def check_authentication!: () -> void

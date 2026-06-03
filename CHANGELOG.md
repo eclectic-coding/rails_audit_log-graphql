@@ -5,6 +5,8 @@
 - `auditLogEntriesConnection` — new Relay-style cursor-paginated field returning `AuditLogEntryConnection!` with `nodes`, `edges`, `pageInfo`, and `first`/`after`/`last`/`before` arguments; accepts the same filters as `auditLogEntries`
 - `since:` and `until:` (`ISO8601DateTime`) arguments on both `auditLogEntries` and `auditLogEntriesConnection` for filtering by creation time range
 - `touching:` (`String`) argument on both `auditLogEntries` and `auditLogEntriesConnection` — filters to entries whose `object_changes` include the named attribute
+- `orderBy:` (`AuditLogEntrySortInput`) argument on both `auditLogEntries` and `auditLogEntriesConnection` — accepts `{ field: CREATED_AT, direction: ASC | DESC }`; defaults to `CREATED_AT DESC`
+- `AuditLogEntrySortInput` input object type, `AuditLogEntrySortField` enum, and `SortDirection` enum added to the schema
 
 ## [0.1.0] - 2026-06-03
 
