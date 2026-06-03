@@ -8,7 +8,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 - **Time-range filters** — `since:` and `until:` arguments on `auditLogEntries`
 - **`touching:` filter** — narrow results to entries that changed a specific attribute
-- **Relay-style connection** — replace offset pagination with cursor-based `AuditLogEntryConnection` for forward/backward pagination
 - **Sorting** — `orderBy: { field: CREATED_AT, direction: DESC }`
 
 ---

@@ -79,20 +79,53 @@ end
 
 Fetch a single entry by ID. Returns `nil` if not found.
 
-#### `auditLogEntries(...): [AuditLogEntry!]!`
+#### `auditLogEntries(...): AuditLogEntryConnection!`
 
-List entries with optional filters and offset pagination.
+List entries with optional filters. Returns a [Relay-style connection](https://relay.dev/graphql/connections.htm) for cursor-based pagination.
 
-| Argument | Type | Default | Description |
-|---|---|---|---|
-| `event` | `String` | — | Filter by event type (`create`, `update`, `destroy`) |
-| `itemType` | `String` | — | Filter by audited model class name |
-| `itemId` | `ID` | — | Filter by audited record ID |
-| `actorId` | `ID` | — | Filter by actor ID |
-| `page` | `Int` | `1` | Page number (1-based) |
-| `perPage` | `Int` | `25` | Results per page |
+| Argument | Type | Description |
+|---|---|---|
+| `event` | `String` | Filter by event type (`create`, `update`, `destroy`) |
+| `itemType` | `String` | Filter by audited model class name |
+| `itemId` | `ID` | Filter by audited record ID |
+| `actorId` | `ID` | Filter by actor ID |
+| `first` | `Int` | Return the first N edges after `after` |
+| `after` | `String` | Cursor to paginate forward from |
+| `last` | `Int` | Return the last N edges before `before` |
+| `before` | `String` | Cursor to paginate backward from |
 
 Results are ordered by `created_at DESC`.
+
+**Example — first page:**
+
+```graphql
+{
+  auditLogEntries(first: 25) {
+    nodes {
+      id
+      event
+      itemType
+      itemId
+      createdAt
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+**Example — next page using a cursor:**
+
+```graphql
+{
+  auditLogEntries(first: 25, after: "eyJpZCI6NDJ9") {
+    nodes { id event }
+    pageInfo { hasNextPage endCursor }
+  }
+}
+```
 
 [↑ Back to top](#table-of-contents)
 
