@@ -6,7 +6,26 @@ module RailsAuditLog
       class BaseObject < GraphQL::Schema::Object
       end
 
+      class DiffType < BaseObject
+        def attribute: () -> String
+        def from: () -> untyped
+        def to: () -> untyped
+      end
+
+      class ActorType < BaseObject
+        def id: () -> String
+        def type_name: () -> String
+      end
+
+      class AuditedResourceType < BaseObject
+        def id: () -> String
+        def type_name: () -> String
+      end
+
       class AuditLogEntryType < BaseObject
+        def actor: () -> Hash[Symbol, untyped]?
+        def audited_resource: () -> Hash[Symbol, untyped]
+        def diff: () -> Array[Hash[Symbol, untyped]]?
       end
 
       class SortDirectionEnum < GraphQL::Schema::Enum

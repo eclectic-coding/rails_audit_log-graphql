@@ -13,9 +13,13 @@ A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`]
 - [Installation](#installation)
 - [Usage](#usage)
   - [AuditLogEntryType](#auditlogentrytype)
+  - [AuditLogActor](#auditlogactor)
+  - [AuditedResource](#auditedresource)
+  - [AuditLogDiff](#auditlogdiff)
   - [AuditLogEntriesQueryMixin](#auditlogentriesquerymixin)
     - [auditLogEntry](#auditlogentryid-id-auditlogentry)
     - [auditLogEntries](#auditlogentries-auditlogentry)
+    - [auditLogEntriesConnection](#auditlogentriesconnection-auditlogentryconnection)
   - [Authentication](#authentication)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -61,6 +65,57 @@ This injects `include RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin
 | `actorType` | `String` | yes |
 | `actorId` | `ID` | yes |
 | `tenantId` | `String` | yes |
+| `actor` | `AuditLogActor` | yes |
+| `auditedResource` | `AuditedResource` | no |
+| `diff` | `[AuditLogDiff!]` | yes |
+
+[↑ Back to top](#table-of-contents)
+
+### AuditLogActor
+
+`RailsAuditLog::Graphql::Types::ActorType` — a polymorphic reference to the actor who performed the audited action. Returned by the `actor` field on `AuditLogEntry`. `null` when no actor was recorded.
+
+| GraphQL field | Type | Nullable |
+|---|---|---|
+| `id` | `ID` | no |
+| `typeName` | `String` | no |
+
+[↑ Back to top](#table-of-contents)
+
+### AuditedResource
+
+`RailsAuditLog::Graphql::Types::AuditedResourceType` — a reference to the model record that was changed. Returned by the `auditedResource` field on `AuditLogEntry`. Always present.
+
+| GraphQL field | Type | Nullable |
+|---|---|---|
+| `id` | `ID` | no |
+| `typeName` | `String` | no |
+
+[↑ Back to top](#table-of-contents)
+
+### AuditLogDiff
+
+`RailsAuditLog::Graphql::Types::DiffType` — a single attribute change parsed from `objectChanges`. Returned as a list by the `diff` field on `AuditLogEntry`. `null` when `objectChanges` is not recorded (e.g. destroy events).
+
+| GraphQL field | Type | Nullable | Description |
+|---|---|---|---|
+| `attribute` | `String` | no | Name of the changed attribute |
+| `from` | `JSON` | yes | Value before the change |
+| `to` | `JSON` | yes | Value after the change |
+
+**Example:**
+
+```graphql
+{
+  auditLogEntries(event: "update") {
+    diff {
+      attribute
+      from
+      to
+    }
+  }
+}
+```
 
 [↑ Back to top](#table-of-contents)
 
@@ -89,10 +144,14 @@ List entries with optional filters and offset pagination.
 | `itemType` | `String` | — | Filter by audited model class name |
 | `itemId` | `ID` | — | Filter by audited record ID |
 | `actorId` | `ID` | — | Filter by actor ID |
+| `since` | `ISO8601DateTime` | — | Return entries created at or after this time |
+| `until` | `ISO8601DateTime` | — | Return entries created at or before this time |
+| `touching` | `String` | — | Filter to entries that changed a specific attribute |
+| `orderBy` | `AuditLogEntrySortInput` | `CREATED_AT DESC` | Sort field and direction |
 | `page` | `Int` | `1` | Page number (1-based) |
 | `perPage` | `Int` | `25` | Results per page |
 
-Results are ordered by `created_at DESC`.
+Results default to `created_at DESC` ordering.
 
 #### `auditLogEntriesConnection(...): AuditLogEntryConnection!`
 
