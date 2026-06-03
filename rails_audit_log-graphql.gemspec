@@ -37,6 +37,9 @@ Gem::Specification.new do |spec|
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  spec.add_dependency "graphql", "~> 2.0"
+
+  spec.add_development_dependency "rails_audit_log", "~> 1.4"
   spec.add_development_dependency "simplecov", "~> 0.22"
   spec.add_development_dependency "simplecov_json_formatter", "~> 0.1"
 
