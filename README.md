@@ -8,6 +8,19 @@
 
 A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`](https://github.com/eclectic-coding/rails_audit_log) gem. Provides ready-made GraphQL types, queries, and subscriptions for querying audit log entries — without coupling `graphql-ruby` to the base gem.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [AuditLogEntryType](#auditlogentrytype)
+  - [AuditLogEntriesQueryMixin](#auditlogentriesquerymixin)
+    - [auditLogEntry](#auditlogentryid-id-auditlogentry)
+    - [auditLogEntries](#auditlogentries-auditlogentry)
+  - [Authentication](#authentication)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Installation
 
 Add to your application's Gemfile:
@@ -16,6 +29,8 @@ Add to your application's Gemfile:
 gem "rails_audit_log"
 gem "rails_audit_log-graphql"
 ```
+
+[↑ Back to top](#table-of-contents)
 
 ## Usage
 
@@ -38,6 +53,8 @@ gem "rails_audit_log-graphql"
 | `actorType` | `String` | yes |
 | `actorId` | `ID` | yes |
 | `tenantId` | `String` | yes |
+
+[↑ Back to top](#table-of-contents)
 
 ### AuditLogEntriesQueryMixin
 
@@ -69,6 +86,8 @@ List entries with optional filters and offset pagination.
 
 Results are ordered by `created_at DESC`.
 
+[↑ Back to top](#table-of-contents)
+
 ### Authentication
 
 If `RailsAuditLog.authenticate` is configured, the block is called with the GraphQL context before every query. Return a truthy value to allow access; return falsy to raise `GraphQL::ExecutionError` with `"Unauthorized"`.
@@ -81,16 +100,22 @@ end
 
 If no authenticate block is set, all queries are permitted.
 
+[↑ Back to top](#table-of-contents)
+
 ## Development
 
 ```bash
-bin/setup       # install dependencies
+bin/setup         # install dependencies
 bundle exec rake  # lint + tests
 ```
 
+[↑ Back to top](#table-of-contents)
+
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/eclectic-coding/rails_audit_log-graphql.
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+[↑ Back to top](#table-of-contents)
 
 ## License
 
