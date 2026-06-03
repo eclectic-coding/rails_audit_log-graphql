@@ -7,5 +7,10 @@
 /spec/reports/
 /tmp/
 
+# Rails dummy app generated files
+/log/
+spec/dummy/log/
+spec/dummy/tmp/
+
 # rspec failure tracking
 .rspec_status
