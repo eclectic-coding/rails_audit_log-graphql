@@ -1,0 +1,492 @@
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+  [1m[35m (4.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "audit_log_entries"[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "audit_log_entries" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "event" varchar NOT NULL, "item_type" varchar NOT NULL, "item_id" bigint NOT NULL, "object_changes" json, "object" json, "metadata" json, "reason" varchar, "whodunnit_snapshot" varchar, "actor_type" varchar, "actor_id" bigint, "tenant_id" varchar, "created_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_item_type_and_item_id" ON "audit_log_entries" ("item_type", "item_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_actor_type_and_actor_id" ON "audit_log_entries" ("actor_type", "actor_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_event" ON "audit_log_entries" ("event")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_created_at" ON "audit_log_entries" ("created_at")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_tenant_id" ON "audit_log_entries" ("tenant_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "posts"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "posts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar NOT NULL, "body" text, "created_at" datetime(6), "updated_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "users"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6), "updated_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20260603000001)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.0ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'test', '2026-06-03 11:54:59.128267', '2026-06-03 11:54:59.128269') RETURNING "key"[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.2ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.156960"], ["updated_at", "2026-06-03 11:54:59.156960"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.2ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.176354"], ["updated_at", "2026-06-03 11:54:59.176354"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.176Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.180946"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.181725"], ["updated_at", "2026-06-03 11:54:59.181725"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.181Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.182156"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.1ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.186811"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.181Z\",\"updated_at\":\"2026-06-03T11:54:59.181Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.188360"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.218640"], ["updated_at", "2026-06-03 11:54:59.218640"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.219175"], ["updated_at", "2026-06-03 11:54:59.219175"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.219Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.219630"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.220074"], ["updated_at", "2026-06-03 11:54:59.220074"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.220Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.220432"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.221050"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.220Z\",\"updated_at\":\"2026-06-03T11:54:59.220Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.221523"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."event" = ? ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["event", "create"], ["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.223999"], ["updated_at", "2026-06-03 11:54:59.223999"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.224433"], ["updated_at", "2026-06-03 11:54:59.224433"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.224Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.224841"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.225264"], ["updated_at", "2026-06-03 11:54:59.225264"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.225Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.225622"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.226232"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.225Z\",\"updated_at\":\"2026-06-03T11:54:59.225Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.226684"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."item_type" = ? ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["item_type", "Post"], ["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.228457"], ["updated_at", "2026-06-03 11:54:59.228457"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.228860"], ["updated_at", "2026-06-03 11:54:59.228860"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.228Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.229239"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.229645"], ["updated_at", "2026-06-03 11:54:59.229645"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.229Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.230000"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.230588"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.229Z\",\"updated_at\":\"2026-06-03T11:54:59.229Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.231025"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 2], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.232544"], ["updated_at", "2026-06-03 11:54:59.232544"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.232916"], ["updated_at", "2026-06-03 11:54:59.232916"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.232Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.233282"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.233682"], ["updated_at", "2026-06-03 11:54:59.233682"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.233Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.234034"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.234583"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.233Z\",\"updated_at\":\"2026-06-03T11:54:59.233Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.235003"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.236578"], ["updated_at", "2026-06-03 11:54:59.236578"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.236975"], ["updated_at", "2026-06-03 11:54:59.236975"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.236Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.237360"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.237768"], ["updated_at", "2026-06-03 11:54:59.237768"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.237Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.238125"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.238709"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.237Z\",\"updated_at\":\"2026-06-03T11:54:59.237Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.239134"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."id" ASC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.240928"], ["updated_at", "2026-06-03 11:54:59.240928"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.241315"], ["updated_at", "2026-06-03 11:54:59.241315"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.241Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.241683"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.242083"], ["updated_at", "2026-06-03 11:54:59.242083"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.242Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.242435"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.243009"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.242Z\",\"updated_at\":\"2026-06-03T11:54:59.242Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.243427"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."id" = ? LIMIT ?[0m  [["id", 999999], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.244824"], ["updated_at", "2026-06-03 11:54:59.244824"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.245210"], ["updated_at", "2026-06-03 11:54:59.245210"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.245Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.245583"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.245992"], ["updated_at", "2026-06-03 11:54:59.245992"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.245Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.246346"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.246913"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.245Z\",\"updated_at\":\"2026-06-03T11:54:59.245Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.247349"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:54:59.249277"], ["updated_at", "2026-06-03 11:54:59.249277"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.249663"], ["updated_at", "2026-06-03 11:54:59.249663"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:54:59.249Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.250035"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:54:59.250435"], ["updated_at", "2026-06-03 11:54:59.250435"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:54:59.250Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.250782"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:54:59.251366"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:54:59.250Z\",\"updated_at\":\"2026-06-03T11:54:59.250Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:54:59.251789"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+Generating image variants require the image_processing gem. Please add `gem "image_processing", "~> 1.2"` to your Gemfile or set `config.active_storage.variant_processor = :disabled`.
+  [1m[35m (2.9ms)[0m  [1m[35mDROP TABLE IF EXISTS "audit_log_entries"[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "audit_log_entries" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "event" varchar NOT NULL, "item_type" varchar NOT NULL, "item_id" bigint NOT NULL, "object_changes" json, "object" json, "metadata" json, "reason" varchar, "whodunnit_snapshot" varchar, "actor_type" varchar, "actor_id" bigint, "tenant_id" varchar, "created_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_item_type_and_item_id" ON "audit_log_entries" ("item_type", "item_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_actor_type_and_actor_id" ON "audit_log_entries" ("actor_type", "actor_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_event" ON "audit_log_entries" ("event")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_created_at" ON "audit_log_entries" ("created_at")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE INDEX "index_audit_log_entries_on_tenant_id" ON "audit_log_entries" ("tenant_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "posts"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "posts" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar NOT NULL, "body" text, "created_at" datetime(6), "updated_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mDROP TABLE IF EXISTS "users"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "users" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6), "updated_at" datetime(6))[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[35m (0.0ms)[0m  [1m[32mINSERT INTO "schema_migrations" (version) VALUES (20260603000001)[0m
+  [1m[35m (0.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.0ms)[0m  [1m[34mSELECT * FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? ORDER BY "ar_internal_metadata"."key" ASC LIMIT 1[0m  [[nil, "environment"]]
+  [1m[36mActiveRecord::InternalMetadata Create (0.0ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES ('environment', 'test', '2026-06-03 11:55:23.042160', '2026-06-03 11:55:23.042162') RETURNING "key"[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.077617"], ["updated_at", "2026-06-03 11:55:23.077617"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.2ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.083659"], ["updated_at", "2026-06-03 11:55:23.083659"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.083Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.087590"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.088473"], ["updated_at", "2026-06-03 11:55:23.088473"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.088Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.089025"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.1ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.093683"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.088Z\",\"updated_at\":\"2026-06-03T11:55:23.088Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.095056"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.123058"], ["updated_at", "2026-06-03 11:55:23.123058"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.123616"], ["updated_at", "2026-06-03 11:55:23.123616"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.123Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.124062"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.124517"], ["updated_at", "2026-06-03 11:55:23.124517"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.124Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.124874"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.125572"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.124Z\",\"updated_at\":\"2026-06-03T11:55:23.124Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.126039"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."event" = ? ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["event", "create"], ["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.2ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.128981"], ["updated_at", "2026-06-03 11:55:23.128981"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.129733"], ["updated_at", "2026-06-03 11:55:23.129733"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.129Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.130303"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.130942"], ["updated_at", "2026-06-03 11:55:23.130942"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.130Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.131409"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.132136"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.130Z\",\"updated_at\":\"2026-06-03T11:55:23.130Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.132652"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."item_type" = ? ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["item_type", "Post"], ["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.134630"], ["updated_at", "2026-06-03 11:55:23.134630"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.135063"], ["updated_at", "2026-06-03 11:55:23.135063"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.135Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.135467"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.135898"], ["updated_at", "2026-06-03 11:55:23.135898"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.135Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.136265"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.136917"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.135Z\",\"updated_at\":\"2026-06-03T11:55:23.135Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.137361"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 2], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.138867"], ["updated_at", "2026-06-03 11:55:23.138867"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.139345"], ["updated_at", "2026-06-03 11:55:23.139345"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.139Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.139793"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.140221"], ["updated_at", "2026-06-03 11:55:23.140221"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.140Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.140601"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.141198"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.140Z\",\"updated_at\":\"2026-06-03T11:55:23.140Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.141645"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.143193"], ["updated_at", "2026-06-03 11:55:23.143193"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.143576"], ["updated_at", "2026-06-03 11:55:23.143576"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.143Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.143941"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.144349"], ["updated_at", "2026-06-03 11:55:23.144349"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.144Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.144698"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.145274"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.144Z\",\"updated_at\":\"2026-06-03T11:55:23.144Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.145713"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."id" ASC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.147458"], ["updated_at", "2026-06-03 11:55:23.147458"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.147923"], ["updated_at", "2026-06-03 11:55:23.147923"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.147Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.148373"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.148954"], ["updated_at", "2026-06-03 11:55:23.148954"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.148Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.149415"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.150199"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.1ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.148Z\",\"updated_at\":\"2026-06-03T11:55:23.148Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.150776"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.1ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" WHERE "audit_log_entries"."id" = ? LIMIT ?[0m  [["id", 999999], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.152735"], ["updated_at", "2026-06-03 11:55:23.152735"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.153235"], ["updated_at", "2026-06-03 11:55:23.153235"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.153Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.153654"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.154085"], ["updated_at", "2026-06-03 11:55:23.154085"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.154Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.154461"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.155116"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.154Z\",\"updated_at\":\"2026-06-03T11:55:23.154Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.155569"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mUser Create (0.1ms)[0m  [1m[32mINSERT INTO "users" ("name", "created_at", "updated_at") VALUES (?, ?, ?) RETURNING "id"[0m  [["name", "Admin"], ["created_at", "2026-06-03 11:55:23.157429"], ["updated_at", "2026-06-03 11:55:23.157429"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "First post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.157826"], ["updated_at", "2026-06-03 11:55:23.157826"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 1], ["object_changes", "{\"id\":[null,1],\"title\":[null,\"First post\"],\"created_at\":[null,\"2026-06-03T11:55:23.157Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.158218"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Create (0.1ms)[0m  [1m[32mINSERT INTO "posts" ("title", "body", "created_at", "updated_at") VALUES (?, ?, ?, ?) RETURNING "id"[0m  [["title", "Second post"], ["body", nil], ["created_at", "2026-06-03 11:55:23.158631"], ["updated_at", "2026-06-03 11:55:23.158631"]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "create"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"id\":[null,2],\"title\":[null,\"Second post\"],\"created_at\":[null,\"2026-06-03T11:55:23.158Z\"]}"], ["object", nil], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.158988"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mPost Load (0.0ms)[0m  [1m[34mSELECT "posts".* FROM "posts" ORDER BY "posts"."id" DESC LIMIT ?[0m  [["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mSAVEPOINT active_record_1[0m
+  [1m[36mPost Update (0.1ms)[0m  [1m[33mUPDATE "posts" SET "title" = ?, "updated_at" = ? WHERE "posts"."id" = ?[0m  [["title", "Updated post"], ["updated_at", "2026-06-03 11:55:23.159603"], ["id", 2]]
+  [1m[36mRailsAuditLog::AuditLogEntry Create (0.0ms)[0m  [1m[32mINSERT INTO "audit_log_entries" ("event", "item_type", "item_id", "object_changes", "object", "metadata", "reason", "whodunnit_snapshot", "actor_type", "actor_id", "tenant_id", "created_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING "id"[0m  [["event", "update"], ["item_type", "Post"], ["item_id", 2], ["object_changes", "{\"title\":[\"Second post\",\"Updated post\"]}"], ["object", "{\"title\":\"Second post\",\"id\":2,\"body\":null,\"created_at\":\"2026-06-03T11:55:23.158Z\",\"updated_at\":\"2026-06-03T11:55:23.158Z\"}"], ["metadata", nil], ["reason", nil], ["whodunnit_snapshot", "Admin"], ["actor_type", "User"], ["actor_id", 1], ["tenant_id", nil], ["created_at", "2026-06-03 11:55:23.160046"]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[35mRELEASE SAVEPOINT active_record_1[0m
+  [1m[36mRailsAuditLog::AuditLogEntry Load (0.0ms)[0m  [1m[34mSELECT "audit_log_entries".* FROM "audit_log_entries" ORDER BY "audit_log_entries"."created_at" DESC LIMIT ? OFFSET ?[0m  [["LIMIT", 25], ["OFFSET", 0]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mBEGIN deferred TRANSACTION[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[31mROLLBACK TRANSACTION[0m
