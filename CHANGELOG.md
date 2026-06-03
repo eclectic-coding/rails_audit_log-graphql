@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+### Added
+
+- Relay-style cursor pagination — `auditLogEntries` now returns `AuditLogEntryConnection` with `nodes`, `edges`, and `pageInfo` (`hasNextPage`, `hasPreviousPage`, `startCursor`, `endCursor`)
+- `first`, `after`, `last`, `before` cursor arguments on `auditLogEntries` (standard Relay connection arguments)
+
+### Changed
+
+- `auditLogEntries` return type changed from `[AuditLogEntry!]!` to `AuditLogEntryConnection!` — callers must now select `nodes { ... }` or `edges { node { ... } cursor }` instead of selecting fields directly on the list
+- `page` and `perPage` arguments removed from `auditLogEntries`
+
 ## [0.1.0] - 2026-06-03
 
 ### Added

@@ -13,40 +13,59 @@ RSpec.describe "auditLogEntries queries" do
 
   describe "auditLogEntries" do
     it "returns all entries" do
-      result = DummySchema.execute("{ auditLogEntries { id event itemType } }", context: {})
-      entries = result.dig("data", "auditLogEntries")
+      result = DummySchema.execute("{ auditLogEntries { nodes { id event itemType } } }", context: {})
+      entries = result.dig("data", "auditLogEntries", "nodes")
       expect(entries.size).to eq(3)
     end
 
     it "filters by event" do
       result = DummySchema.execute(
-        '{ auditLogEntries(event: "create") { event } }',
+        '{ auditLogEntries(event: "create") { nodes { event } } }',
         context: {}
       )
-      events = result.dig("data", "auditLogEntries").map { |e| e["event"] }
+      events = result.dig("data", "auditLogEntries", "nodes").map { |e| e["event"] }
       expect(events).to all(eq("create"))
     end
 
     it "filters by itemType" do
       result = DummySchema.execute(
-        '{ auditLogEntries(itemType: "Post") { itemType } }',
+        '{ auditLogEntries(itemType: "Post") { nodes { itemType } } }',
         context: {}
       )
-      types = result.dig("data", "auditLogEntries").map { |e| e["itemType"] }
+      types = result.dig("data", "auditLogEntries", "nodes").map { |e| e["itemType"] }
       expect(types).to all(eq("Post"))
     end
 
-    it "paginates with page and perPage" do
+    it "paginates forward with first" do
       result = DummySchema.execute(
-        "{ auditLogEntries(page: 1, perPage: 2) { id } }",
+        "{ auditLogEntries(first: 2) { nodes { id } pageInfo { hasNextPage endCursor } } }",
         context: {}
       )
-      expect(result.dig("data", "auditLogEntries").size).to eq(2)
+      nodes = result.dig("data", "auditLogEntries", "nodes")
+      page_info = result.dig("data", "auditLogEntries", "pageInfo")
+      expect(nodes.size).to eq(2)
+      expect(page_info["hasNextPage"]).to be true
+    end
+
+    it "paginates to the next page with after cursor" do
+      first_page = DummySchema.execute(
+        "{ auditLogEntries(first: 2) { nodes { id } pageInfo { endCursor } } }",
+        context: {}
+      )
+      cursor = first_page.dig("data", "auditLogEntries", "pageInfo", "endCursor")
+
+      second_page = DummySchema.execute(
+        "{ auditLogEntries(first: 2, after: \"#{cursor}\") { nodes { id } pageInfo { hasNextPage } } }",
+        context: {}
+      )
+      nodes = second_page.dig("data", "auditLogEntries", "nodes")
+      expect(nodes.size).to eq(1)
+      expect(second_page.dig("data", "auditLogEntries", "pageInfo", "hasNextPage")).to be false
     end
 
     it "orders by created_at DESC" do
-      result = DummySchema.execute("{ auditLogEntries { event } }", context: {})
-      entries = result.dig("data", "auditLogEntries")
+      result = DummySchema.execute("{ auditLogEntries { nodes { event } } }", context: {})
+      entries = result.dig("data", "auditLogEntries", "nodes")
       expect(entries.first["event"]).to eq("update")
     end
   end
@@ -79,7 +98,7 @@ RSpec.describe "auditLogEntries queries" do
 
     it "raises Unauthorized when block returns falsy" do
       result = DummySchema.execute(
-        "{ auditLogEntries { id } }",
+        "{ auditLogEntries { nodes { id } } }",
         context: {current_user: nil}
       )
       expect(result["errors"].first["message"]).to eq("Unauthorized")
@@ -87,7 +106,7 @@ RSpec.describe "auditLogEntries queries" do
 
     it "permits access when block returns truthy" do
       result = DummySchema.execute(
-        "{ auditLogEntries { id } }",
+        "{ auditLogEntries { nodes { id } } }",
         context: {current_user: user}
       )
       expect(result["errors"]).to be_nil
