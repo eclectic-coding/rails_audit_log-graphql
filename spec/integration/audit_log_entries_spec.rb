@@ -49,6 +49,34 @@ RSpec.describe "auditLogEntries queries" do
       entries = result.dig("data", "auditLogEntries")
       expect(entries.first["event"]).to eq("update")
     end
+
+    it "filters by since" do
+      future = (Time.now + 60).iso8601
+      result = DummySchema.execute(
+        "{ auditLogEntries(since: \"#{future}\") { id } }",
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntries")).to be_empty
+    end
+
+    it "filters by until" do
+      past = (Time.now - 60).iso8601
+      result = DummySchema.execute(
+        "{ auditLogEntries(until: \"#{past}\") { id } }",
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntries")).to be_empty
+    end
+
+    it "returns entries within a time range" do
+      before_time = (Time.now - 5).iso8601
+      after_time = (Time.now + 5).iso8601
+      result = DummySchema.execute(
+        "{ auditLogEntries(since: \"#{before_time}\", until: \"#{after_time}\") { id } }",
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntries").size).to eq(3)
+    end
   end
 
   describe "auditLogEntriesConnection (cursor-paginated)" do

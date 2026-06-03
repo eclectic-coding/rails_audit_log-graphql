@@ -41,8 +41,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("[AuditLogEntry!]!")
     end
 
-    it "exposes exactly 6 arguments" do
-      expect(field.arguments.size).to eq(6)
+    it "exposes exactly 8 arguments" do
+      expect(field.arguments.size).to eq(8)
     end
 
     describe "filter arguments" do
@@ -59,6 +59,14 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
           arg = field.arguments.fetch(arg_name)
           expect(arg.type.non_null?).to be false
           expect(arg.type.graphql_name).to eq("ID")
+        end
+      end
+
+      %w[since until].each do |arg_name|
+        it "has optional #{arg_name} ISO8601DateTime argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("ISO8601DateTime")
         end
       end
     end
@@ -87,8 +95,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("AuditLogEntryConnection!")
     end
 
-    it "exposes exactly 8 arguments (4 filters + 4 cursor pagination)" do
-      expect(field.arguments.size).to eq(8)
+    it "exposes exactly 10 arguments (6 filters + 4 cursor pagination)" do
+      expect(field.arguments.size).to eq(10)
     end
 
     describe "filter arguments" do
@@ -105,6 +113,14 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
           arg = field.arguments.fetch(arg_name)
           expect(arg.type.non_null?).to be false
           expect(arg.type.graphql_name).to eq("ID")
+        end
+      end
+
+      %w[since until].each do |arg_name|
+        it "has optional #{arg_name} ISO8601DateTime argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("ISO8601DateTime")
         end
       end
     end
@@ -190,6 +206,18 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         resolver.resolve_audit_log_entries(actor_id: "7")
       end
 
+      it "filters by since" do
+        t = Time.now
+        expect(scope).to receive(:where).with("created_at >= ?", t).and_return(scope)
+        resolver.resolve_audit_log_entries(since: t)
+      end
+
+      it "filters by until_time" do
+        t = Time.now
+        expect(scope).to receive(:where).with("created_at <= ?", t).and_return(scope)
+        resolver.resolve_audit_log_entries(until_time: t)
+      end
+
       it "calculates offset correctly for page 2" do
         expect(scope).to receive(:limit).with(10).and_return(scope)
         expect(scope).to receive(:offset).with(10).and_return(scope)
@@ -220,6 +248,18 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       it "filters by actor_id" do
         expect(scope).to receive(:where).with(actor_id: "7").and_return(scope)
         resolver.resolve_audit_log_entries_connection(actor_id: "7")
+      end
+
+      it "filters by since" do
+        t = Time.now
+        expect(scope).to receive(:where).with("created_at >= ?", t).and_return(scope)
+        resolver.resolve_audit_log_entries_connection(since: t)
+      end
+
+      it "filters by until_time" do
+        t = Time.now
+        expect(scope).to receive(:where).with("created_at <= ?", t).and_return(scope)
+        resolver.resolve_audit_log_entries_connection(until_time: t)
       end
     end
 
