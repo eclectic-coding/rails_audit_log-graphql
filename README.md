@@ -30,6 +30,14 @@ gem "rails_audit_log"
 gem "rails_audit_log-graphql"
 ```
 
+Then run the install generator to wire up your schema:
+
+```bash
+rails g rails_audit_log:graphql:install
+```
+
+This injects `include RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin` into `app/graphql/types/query_type.rb`. If that file doesn't exist, the generator prints the line for you to add manually.
+
 [↑ Back to top](#table-of-contents)
 
 ## Usage
