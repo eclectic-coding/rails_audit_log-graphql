@@ -31,6 +31,23 @@ jobs:
       - name: Run StandardRB
         run: bundle exec standardrb
 
+  security:
+    name: Security audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+          bundler-cache: true
+
+      - name: Run bundler-audit
+        run: bundle exec rake bundle:audit:update bundle:audit:check
+
   test:
     name: Ruby ${{ matrix.ruby }}
     runs-on: ubuntu-latest
