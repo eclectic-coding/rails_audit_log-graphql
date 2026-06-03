@@ -81,14 +81,21 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
   end
 
   describe "resolver methods" do
+    let(:graphql_context) { {} }
+
     let(:resolver) do
-      Object.new.tap { |o| o.extend(described_class) }
+      ctx = graphql_context
+      Object.new.tap do |o|
+        o.extend(described_class)
+        o.define_singleton_method(:context) { ctx }
+      end
     end
 
     let(:scope) { double("scope") }
 
     before do
       stub_const("RailsAuditLog::AuditLogEntry", Class.new)
+      allow(RailsAuditLog).to receive(:authenticate).and_return(nil)
       allow(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :desc).and_return(scope)
       allow(scope).to receive(:where).and_return(scope)
       allow(scope).to receive(:limit).and_return(scope)
@@ -139,6 +146,61 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         expect(scope).to receive(:limit).with(10).and_return(scope)
         expect(scope).to receive(:offset).with(10).and_return(scope)
         resolver.resolve_audit_log_entries(page: 2, per_page: 10)
+      end
+    end
+
+    describe "authentication" do
+      before do
+        allow(RailsAuditLog::AuditLogEntry).to receive(:find_by).and_return(nil)
+      end
+
+      context "when no authenticate block is configured" do
+        before { allow(RailsAuditLog).to receive(:authenticate).and_return(nil) }
+
+        it "allows auditLogEntry through" do
+          expect { resolver.resolve_audit_log_entry(id: "1") }.not_to raise_error
+        end
+
+        it "allows auditLogEntries through" do
+          expect { resolver.resolve_audit_log_entries }.not_to raise_error
+        end
+      end
+
+      context "when authenticate block returns truthy" do
+        before { allow(RailsAuditLog).to receive(:authenticate).and_return(->(ctx) { true }) }
+
+        it "allows auditLogEntry through" do
+          expect { resolver.resolve_audit_log_entry(id: "1") }.not_to raise_error
+        end
+
+        it "allows auditLogEntries through" do
+          expect { resolver.resolve_audit_log_entries }.not_to raise_error
+        end
+      end
+
+      context "when authenticate block returns falsy" do
+        before { allow(RailsAuditLog).to receive(:authenticate).and_return(->(ctx) { false }) }
+
+        it "raises GraphQL::ExecutionError for auditLogEntry" do
+          expect { resolver.resolve_audit_log_entry(id: "1") }
+            .to raise_error(GraphQL::ExecutionError, "Unauthorized")
+        end
+
+        it "raises GraphQL::ExecutionError for auditLogEntries" do
+          expect { resolver.resolve_audit_log_entries }
+            .to raise_error(GraphQL::ExecutionError, "Unauthorized")
+        end
+      end
+
+      it "passes the graphql context to the authenticate block" do
+        graphql_context[:current_user] = "admin"
+        received_ctx = nil
+        allow(RailsAuditLog).to receive(:authenticate).and_return(->(ctx) {
+          received_ctx = ctx
+          true
+        })
+        resolver.resolve_audit_log_entry(id: "1")
+        expect(received_ctx[:current_user]).to eq("admin")
       end
     end
   end

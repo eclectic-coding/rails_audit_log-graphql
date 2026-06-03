@@ -69,6 +69,18 @@ List entries with optional filters and offset pagination.
 
 Results are ordered by `created_at DESC`.
 
+### Authentication
+
+If `RailsAuditLog.authenticate` is configured, the block is called with the GraphQL context before every query. Return a truthy value to allow access; return falsy to raise `GraphQL::ExecutionError` with `"Unauthorized"`.
+
+```ruby
+RailsAuditLog.configure do |config|
+  config.authenticate { |ctx| ctx[:current_user]&.admin? }
+end
+```
+
+If no authenticate block is set, all queries are permitted.
+
 ## Development
 
 ```bash

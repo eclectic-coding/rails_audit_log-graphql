@@ -15,6 +15,8 @@ module RailsAuditLog
         def self.included: (untyped base) -> void
         def resolve_audit_log_entry: (id: String) -> untyped
         def resolve_audit_log_entries: (?event: String?, ?item_type: String?, ?item_id: String?, ?actor_id: String?, ?page: Integer, ?per_page: Integer) -> untyped
+        private
+        def check_authentication!: () -> void
       end
     end
   end
