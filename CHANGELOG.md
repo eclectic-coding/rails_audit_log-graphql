@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `ActorType` (`AuditLogActor`) — new object type with `id` and `typeName` fields exposing the polymorphic actor reference; adds `actor: AuditLogActor` field on `AuditLogEntry`
+- `AuditedResourceType` (`AuditedResource`) — new object type with `id` and `typeName` fields exposing the audited model reference; adds `auditedResource: AuditedResource!` field on `AuditLogEntry`
+- `DiffType` (`AuditLogDiff`) — new object type with `attribute`, `from`, and `to` fields; adds `diff: [AuditLogDiff!]` field on `AuditLogEntry` parsed from `objectChanges`
+
 ## [0.2.0] - 2026-06-03
 
 ### Added

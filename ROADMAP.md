@@ -4,14 +4,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ---
 
-## 0.3.0 — Actor & Resource Resolver Types
-
-- **`ActorType`** — resolve the polymorphic `actor` to the concrete type in the host app's schema (requires a configurable type resolver proc)
-- **`AuditedResourceType`** — resolve `item_type`/`item_id` to the concrete audited model type
-- **`diffType`** — structured `{ from, to }` diff type instead of raw `objectChanges` JSON
-
----
-
 ## 0.4.0 — Subscriptions
 
 Requires Action Cable in the host application.
