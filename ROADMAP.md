@@ -8,9 +8,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 The minimum useful surface: drop in the gem, mount the types, and start querying audit entries.
 
-- **`AuditLogEntriesQueryMixin`** — include into the host app's `QueryType` to add:
-  - `auditLogEntry(id:)` — fetch a single entry by ID
-  - `auditLogEntries(event:, itemType:, itemId:, actorId:)` — filtered list with offset pagination
 - **Authentication** — respects `RailsAuditLog.authenticate` if configured; raises `GraphQL::ExecutionError` on unauthorized access
 - **Generator** — `rails g rails_audit_log:graphql:install` to scaffold the mixin include into the host app's schema
 
