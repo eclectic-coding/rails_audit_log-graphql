@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../lib/safe_memoize/release_tooling"
+require_relative "../lib/rails_audit_log/graphql/release_tooling"
 
 root = File.expand_path("..", File.dirname(__FILE__))
 changelog_file = File.join(root, "CHANGELOG.md")
@@ -10,11 +10,10 @@ output_file = ARGV[1]
 
 abort "Usage: bin/release_notes VERSION [OUTPUT_PATH]" unless version
 
-notes = SafeMemoize::ReleaseTooling.extract_release_notes(File.read(changelog_file), version)
+notes = RailsAuditLog::Graphql::ReleaseTooling.extract_release_notes(File.read(changelog_file), version)
 
 if output_file
   File.write(output_file, notes)
 else
   puts notes
 end
-
