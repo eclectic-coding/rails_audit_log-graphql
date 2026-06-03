@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-03
+
 ### Added
 
 - `ActorType` (`AuditLogActor`) — new object type with `id` and `typeName` fields exposing the polymorphic actor reference; adds `actor: AuditLogActor` field on `AuditLogEntry`
