@@ -3,10 +3,10 @@
 
 require "date"
 require "optparse"
-require_relative "../lib/safe_memoize/release_tooling"
+require_relative "../lib/rails_audit_log/graphql/release_tooling"
 
 root = File.expand_path("..", File.dirname(__FILE__))
-version_file = File.join(root, "lib/safe_memoize/version.rb")
+version_file = File.join(root, "lib/rails_audit_log/graphql/version.rb")
 changelog_file = File.join(root, "CHANGELOG.md")
 roadmap_file = File.join(root, "ROADMAP.md")
 release_date = Date.today
@@ -28,15 +28,15 @@ parser.parse!
 version = ARGV.first
 abort(parser.to_s) unless version
 
-normalized_version = SafeMemoize::ReleaseTooling.normalize_version(version)
+normalized_version = RailsAuditLog::Graphql::ReleaseTooling.normalize_version(version)
 release_message = "Release v#{normalized_version}"
 
 version_contents = File.read(version_file)
 changelog_contents = File.read(changelog_file)
 roadmap_contents = File.read(roadmap_file)
-updated_version_contents = SafeMemoize::ReleaseTooling.update_version_file(version_contents, normalized_version)
-updated_changelog_contents = SafeMemoize::ReleaseTooling.finalize_changelog(changelog_contents, normalized_version, release_date)
-updated_roadmap_contents = SafeMemoize::ReleaseTooling.prune_roadmap(roadmap_contents)
+updated_version_contents = RailsAuditLog::Graphql::ReleaseTooling.update_version_file(version_contents, normalized_version)
+updated_changelog_contents = RailsAuditLog::Graphql::ReleaseTooling.finalize_changelog(changelog_contents, normalized_version, release_date)
+updated_roadmap_contents = RailsAuditLog::Graphql::ReleaseTooling.prune_roadmap(roadmap_contents)
 
 if dry_run
   puts "Validated #{release_message}."
@@ -75,4 +75,3 @@ puts <<~OUTPUT
 
   Pushing the tag will trigger the GitHub Actions workflow that publishes the gem to RubyGems and creates the GitHub release.
 OUTPUT
-
