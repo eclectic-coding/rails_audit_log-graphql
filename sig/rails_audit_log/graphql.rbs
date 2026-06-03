@@ -10,6 +10,15 @@ module RailsAuditLog
       end
     end
 
+    module Generators
+      module Graphql
+        class InstallGenerator < ::Rails::Generators::Base
+          def inject_mixin: () -> void
+          def print_next_steps: () -> void
+        end
+      end
+    end
+
     module Queries
       module AuditLogEntriesQueryMixin
         def self.included: (untyped base) -> void
