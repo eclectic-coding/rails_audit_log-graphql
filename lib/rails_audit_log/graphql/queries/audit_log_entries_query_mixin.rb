@@ -33,16 +33,26 @@ module RailsAuditLog
         end
 
         def resolve_audit_log_entry(id:)
+          check_authentication!
           RailsAuditLog::AuditLogEntry.find_by(id: id)
         end
 
         def resolve_audit_log_entries(event: nil, item_type: nil, item_id: nil, actor_id: nil, page: 1, per_page: 25)
+          check_authentication!
           scope = RailsAuditLog::AuditLogEntry.order(created_at: :desc)
           scope = scope.where(event: event) if event
           scope = scope.where(item_type: item_type) if item_type
           scope = scope.where(item_id: item_id) if item_id
           scope = scope.where(actor_id: actor_id) if actor_id
           scope.limit(per_page).offset((page - 1) * per_page)
+        end
+
+        private
+
+        def check_authentication!
+          auth = RailsAuditLog.authenticate
+          return unless auth
+          raise GraphQL::ExecutionError, "Unauthorized" unless auth.call(context)
         end
       end
     end
