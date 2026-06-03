@@ -41,8 +41,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("[AuditLogEntry!]!")
     end
 
-    it "exposes exactly 8 arguments" do
-      expect(field.arguments.size).to eq(8)
+    it "exposes exactly 9 arguments" do
+      expect(field.arguments.size).to eq(9)
     end
 
     describe "filter arguments" do
@@ -68,6 +68,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
           expect(arg.type.non_null?).to be false
           expect(arg.type.graphql_name).to eq("ISO8601DateTime")
         end
+      end
+
+      it "has optional touching String argument" do
+        arg = field.arguments.fetch("touching")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("String")
       end
     end
 
@@ -95,8 +101,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("AuditLogEntryConnection!")
     end
 
-    it "exposes exactly 10 arguments (6 filters + 4 cursor pagination)" do
-      expect(field.arguments.size).to eq(10)
+    it "exposes exactly 11 arguments (7 filters + 4 cursor pagination)" do
+      expect(field.arguments.size).to eq(11)
     end
 
     describe "filter arguments" do
@@ -122,6 +128,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
           expect(arg.type.non_null?).to be false
           expect(arg.type.graphql_name).to eq("ISO8601DateTime")
         end
+      end
+
+      it "has optional touching String argument" do
+        arg = field.arguments.fetch("touching")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("String")
       end
     end
 
@@ -218,6 +230,11 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         resolver.resolve_audit_log_entries(until_time: t)
       end
 
+      it "filters by touching" do
+        expect(scope).to receive(:where).with("object_changes LIKE ?", "%\"title\":%").and_return(scope)
+        resolver.resolve_audit_log_entries(touching: "title")
+      end
+
       it "calculates offset correctly for page 2" do
         expect(scope).to receive(:limit).with(10).and_return(scope)
         expect(scope).to receive(:offset).with(10).and_return(scope)
@@ -260,6 +277,11 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         t = Time.now
         expect(scope).to receive(:where).with("created_at <= ?", t).and_return(scope)
         resolver.resolve_audit_log_entries_connection(until_time: t)
+      end
+
+      it "filters by touching" do
+        expect(scope).to receive(:where).with("object_changes LIKE ?", "%\"title\":%").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(touching: "title")
       end
     end
 

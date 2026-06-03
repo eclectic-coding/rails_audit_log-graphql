@@ -6,7 +6,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ## 0.2.0 — Filtering & Connections
 
-- **`touching:` filter** — narrow results to entries that changed a specific attribute
 - **Sorting** — `orderBy: { field: CREATED_AT, direction: DESC }`
 
 ---

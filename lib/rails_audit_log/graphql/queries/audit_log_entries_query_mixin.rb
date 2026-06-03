@@ -29,6 +29,7 @@ module RailsAuditLog
             argument :actor_id, GraphQL::Types::ID, required: false, description: "Filter by actor ID."
             argument :since, GraphQL::Types::ISO8601DateTime, required: false, description: "Return entries created at or after this time."
             argument :until, GraphQL::Types::ISO8601DateTime, required: false, as: :until_time, description: "Return entries created at or before this time."
+            argument :touching, String, required: false, description: "Filter to entries that changed a specific attribute (matches object_changes keys)."
             argument :page, GraphQL::Types::Int, required: false, default_value: 1, description: "Page number (1-based)."
             argument :per_page, GraphQL::Types::Int, required: false, default_value: 25, description: "Number of results per page."
           end
@@ -46,6 +47,7 @@ module RailsAuditLog
             argument :actor_id, GraphQL::Types::ID, required: false, description: "Filter by actor ID."
             argument :since, GraphQL::Types::ISO8601DateTime, required: false, description: "Return entries created at or after this time."
             argument :until, GraphQL::Types::ISO8601DateTime, required: false, as: :until_time, description: "Return entries created at or before this time."
+            argument :touching, String, required: false, description: "Filter to entries that changed a specific attribute (matches object_changes keys)."
           end
         end
 
@@ -54,20 +56,20 @@ module RailsAuditLog
           RailsAuditLog::AuditLogEntry.find_by(id: id)
         end
 
-        def resolve_audit_log_entries(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil, page: 1, per_page: 25)
+        def resolve_audit_log_entries(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil, touching: nil, page: 1, per_page: 25)
           check_authentication!
-          scope = build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, since: since, until_time: until_time)
+          scope = build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, since: since, until_time: until_time, touching: touching)
           scope.limit(per_page).offset((page - 1) * per_page)
         end
 
-        def resolve_audit_log_entries_connection(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil)
+        def resolve_audit_log_entries_connection(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil, touching: nil)
           check_authentication!
-          build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, since: since, until_time: until_time)
+          build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, since: since, until_time: until_time, touching: touching)
         end
 
         private
 
-        def build_scope(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil)
+        def build_scope(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil, touching: nil)
           scope = RailsAuditLog::AuditLogEntry.order(created_at: :desc)
           scope = scope.where(event: event) if event
           scope = scope.where(item_type: item_type) if item_type
@@ -75,6 +77,10 @@ module RailsAuditLog
           scope = scope.where(actor_id: actor_id) if actor_id
           scope = scope.where("created_at >= ?", since) if since
           scope = scope.where("created_at <= ?", until_time) if until_time
+          if touching
+            safe = ActiveRecord::Base.sanitize_sql_like(touching)
+            scope = scope.where("object_changes LIKE ?", "%\"#{safe}\":%")
+          end
           scope
         end
 
