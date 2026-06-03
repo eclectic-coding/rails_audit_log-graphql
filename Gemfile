@@ -6,8 +6,11 @@ source "https://rubygems.org"
 gemspec
 
 gem "irb"
-gem "puma"
 gem "rake", "~> 13.0"
+
+group :development do
+  gem "puma"
+end
 
 gem "rspec", "~> 3.0"
 gem "rspec-rails"
