@@ -86,6 +86,15 @@ RSpec.describe "auditLogEntries queries" do
       expect(result.dig("data", "auditLogEntries")).to be_empty
     end
 
+    it "sorts ASC with orderBy" do
+      result = DummySchema.execute(
+        "{ auditLogEntries(orderBy: { field: CREATED_AT, direction: ASC }) { event } }",
+        context: {}
+      )
+      entries = result.dig("data", "auditLogEntries")
+      expect(entries.first["event"]).to eq("create")
+    end
+
     it "returns entries within a time range" do
       before_time = (Time.now - 5).iso8601
       after_time = (Time.now + 5).iso8601
@@ -144,6 +153,15 @@ RSpec.describe "auditLogEntries queries" do
       result = DummySchema.execute("{ auditLogEntriesConnection { nodes { event } } }", context: {})
       entries = result.dig("data", "auditLogEntriesConnection", "nodes")
       expect(entries.first["event"]).to eq("update")
+    end
+
+    it "sorts ASC with orderBy" do
+      result = DummySchema.execute(
+        "{ auditLogEntriesConnection(orderBy: { field: CREATED_AT, direction: ASC }) { nodes { event } } }",
+        context: {}
+      )
+      entries = result.dig("data", "auditLogEntriesConnection", "nodes")
+      expect(entries.first["event"]).to eq("create")
     end
   end
 

@@ -41,8 +41,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("[AuditLogEntry!]!")
     end
 
-    it "exposes exactly 9 arguments" do
-      expect(field.arguments.size).to eq(9)
+    it "exposes exactly 10 arguments" do
+      expect(field.arguments.size).to eq(10)
     end
 
     describe "filter arguments" do
@@ -74,6 +74,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         arg = field.arguments.fetch("touching")
         expect(arg.type.non_null?).to be false
         expect(arg.type.graphql_name).to eq("String")
+      end
+
+      it "has optional orderBy AuditLogEntrySortInput argument" do
+        arg = field.arguments.fetch("orderBy")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("AuditLogEntrySortInput")
       end
     end
 
@@ -101,8 +107,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("AuditLogEntryConnection!")
     end
 
-    it "exposes exactly 11 arguments (7 filters + 4 cursor pagination)" do
-      expect(field.arguments.size).to eq(11)
+    it "exposes exactly 12 arguments (8 filters + 4 cursor pagination)" do
+      expect(field.arguments.size).to eq(12)
     end
 
     describe "filter arguments" do
@@ -134,6 +140,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         arg = field.arguments.fetch("touching")
         expect(arg.type.non_null?).to be false
         expect(arg.type.graphql_name).to eq("String")
+      end
+
+      it "has optional orderBy AuditLogEntrySortInput argument" do
+        arg = field.arguments.fetch("orderBy")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("AuditLogEntrySortInput")
       end
     end
 
@@ -235,6 +247,17 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         resolver.resolve_audit_log_entries(touching: "title")
       end
 
+      it "defaults to created_at DESC ordering" do
+        expect(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :desc).and_return(scope)
+        resolver.resolve_audit_log_entries
+      end
+
+      it "applies a custom order_by" do
+        sort = double("sort", field: :created_at, direction: :asc)
+        expect(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :asc).and_return(scope)
+        resolver.resolve_audit_log_entries(order_by: sort)
+      end
+
       it "calculates offset correctly for page 2" do
         expect(scope).to receive(:limit).with(10).and_return(scope)
         expect(scope).to receive(:offset).with(10).and_return(scope)
@@ -282,6 +305,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       it "filters by touching" do
         expect(scope).to receive(:where).with("object_changes LIKE ?", "%\"title\":%").and_return(scope)
         resolver.resolve_audit_log_entries_connection(touching: "title")
+      end
+
+      it "applies a custom order_by" do
+        sort = double("sort", field: :created_at, direction: :asc)
+        expect(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :asc).and_return(scope)
+        resolver.resolve_audit_log_entries_connection(order_by: sort)
       end
     end
 

@@ -6,8 +6,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ## 0.2.0 — Filtering & Connections
 
-- **Sorting** — `orderBy: { field: CREATED_AT, direction: DESC }`
-
 ---
 
 ## 0.3.0 — Actor & Resource Resolver Types
