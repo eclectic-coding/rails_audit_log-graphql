@@ -56,8 +56,11 @@ File.write(version_file, updated_version_contents)
 File.write(changelog_file, updated_changelog_contents)
 File.write(roadmap_file, updated_roadmap_contents)
 
+system("bundle", "install", chdir: root, exception: true)
+
+gemfile_lock = File.join(root, "Gemfile.lock")
 commands = [
-  ["git", "add", version_file, changelog_file, roadmap_file],
+  ["git", "add", version_file, changelog_file, roadmap_file, gemfile_lock],
   ["git", "commit", "-m", release_message],
   ["git", "tag", "-a", "v#{normalized_version}", "-m", release_message]
 ]
