@@ -4,15 +4,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ---
 
-## 0.1.0 — Core Types & Queries _(enough to get started)_
-
-The minimum useful surface: drop in the gem, mount the types, and start querying audit entries.
-
-
-
-
----
-
 ## 0.2.0 — Filtering & Connections
 
 - **Time-range filters** — `since:` and `until:` arguments on `auditLogEntries`
