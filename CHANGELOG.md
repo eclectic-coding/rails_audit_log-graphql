@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- `auditLogEntriesConnection` — new Relay-style cursor-paginated field returning `AuditLogEntryConnection!` with `nodes`, `edges`, `pageInfo`, and `first`/`after`/`last`/`before` arguments; accepts the same filters as `auditLogEntries`
+
 ## [0.1.0] - 2026-06-03
 
 ### Added

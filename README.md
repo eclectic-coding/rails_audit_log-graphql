@@ -94,6 +94,54 @@ List entries with optional filters and offset pagination.
 
 Results are ordered by `created_at DESC`.
 
+#### `auditLogEntriesConnection(...): AuditLogEntryConnection!`
+
+Same filters as `auditLogEntries`, but returns a [Relay-style connection](https://relay.dev/graphql/connections.htm) for cursor-based pagination.
+
+| Argument | Type | Description |
+|---|---|---|
+| `event` | `String` | Filter by event type (`create`, `update`, `destroy`) |
+| `itemType` | `String` | Filter by audited model class name |
+| `itemId` | `ID` | Filter by audited record ID |
+| `actorId` | `ID` | Filter by actor ID |
+| `first` | `Int` | Return the first N edges after `after` |
+| `after` | `String` | Cursor to paginate forward from |
+| `last` | `Int` | Return the last N edges before `before` |
+| `before` | `String` | Cursor to paginate backward from |
+
+Results are ordered by `created_at DESC`.
+
+**Example — first page:**
+
+```graphql
+{
+  auditLogEntriesConnection(first: 25) {
+    nodes {
+      id
+      event
+      itemType
+      itemId
+      createdAt
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+```
+
+**Example — next page using a cursor:**
+
+```graphql
+{
+  auditLogEntriesConnection(first: 25, after: "eyJpZCI6NDJ9") {
+    nodes { id event }
+    pageInfo { hasNextPage endCursor }
+  }
+}
+```
+
 [↑ Back to top](#table-of-contents)
 
 ### Authentication

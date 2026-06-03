@@ -30,6 +30,19 @@ module RailsAuditLog
             argument :page, GraphQL::Types::Int, required: false, default_value: 1, description: "Page number (1-based)."
             argument :per_page, GraphQL::Types::Int, required: false, default_value: 25, description: "Number of results per page."
           end
+
+          base.field(
+            :audit_log_entries_connection,
+            RailsAuditLog::Graphql::Types::AuditLogEntryType.connection_type,
+            null: false,
+            description: "List audit log entries with optional filters. Cursor-paginated (Relay connection).",
+            resolver_method: :resolve_audit_log_entries_connection
+          ) do
+            argument :event, String, required: false, description: "Filter by event type (create, update, destroy)."
+            argument :item_type, String, required: false, description: "Filter by audited model class name."
+            argument :item_id, GraphQL::Types::ID, required: false, description: "Filter by audited record ID."
+            argument :actor_id, GraphQL::Types::ID, required: false, description: "Filter by actor ID."
+          end
         end
 
         def resolve_audit_log_entry(id:)
@@ -45,6 +58,16 @@ module RailsAuditLog
           scope = scope.where(item_id: item_id) if item_id
           scope = scope.where(actor_id: actor_id) if actor_id
           scope.limit(per_page).offset((page - 1) * per_page)
+        end
+
+        def resolve_audit_log_entries_connection(event: nil, item_type: nil, item_id: nil, actor_id: nil)
+          check_authentication!
+          scope = RailsAuditLog::AuditLogEntry.order(created_at: :desc)
+          scope = scope.where(event: event) if event
+          scope = scope.where(item_type: item_type) if item_type
+          scope = scope.where(item_id: item_id) if item_id
+          scope = scope.where(actor_id: actor_id) if actor_id
+          scope
         end
 
         private

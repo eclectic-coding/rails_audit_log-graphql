@@ -11,7 +11,7 @@ RSpec.describe "auditLogEntries queries" do
     RailsAuditLog.with_actor(user) { Post.last.update!(title: "Updated post") }
   end
 
-  describe "auditLogEntries" do
+  describe "auditLogEntries (offset-paginated list)" do
     it "returns all entries" do
       result = DummySchema.execute("{ auditLogEntries { id event itemType } }", context: {})
       entries = result.dig("data", "auditLogEntries")
@@ -51,6 +51,56 @@ RSpec.describe "auditLogEntries queries" do
     end
   end
 
+  describe "auditLogEntriesConnection (cursor-paginated)" do
+    it "returns all entries via nodes" do
+      result = DummySchema.execute("{ auditLogEntriesConnection { nodes { id event itemType } } }", context: {})
+      entries = result.dig("data", "auditLogEntriesConnection", "nodes")
+      expect(entries.size).to eq(3)
+    end
+
+    it "filters by event" do
+      result = DummySchema.execute(
+        '{ auditLogEntriesConnection(event: "create") { nodes { event } } }',
+        context: {}
+      )
+      events = result.dig("data", "auditLogEntriesConnection", "nodes").map { |e| e["event"] }
+      expect(events).to all(eq("create"))
+    end
+
+    it "paginates forward with first" do
+      result = DummySchema.execute(
+        "{ auditLogEntriesConnection(first: 2) { nodes { id } pageInfo { hasNextPage endCursor } } }",
+        context: {}
+      )
+      nodes = result.dig("data", "auditLogEntriesConnection", "nodes")
+      page_info = result.dig("data", "auditLogEntriesConnection", "pageInfo")
+      expect(nodes.size).to eq(2)
+      expect(page_info["hasNextPage"]).to be true
+    end
+
+    it "paginates to the next page with after cursor" do
+      first_page = DummySchema.execute(
+        "{ auditLogEntriesConnection(first: 2) { nodes { id } pageInfo { endCursor } } }",
+        context: {}
+      )
+      cursor = first_page.dig("data", "auditLogEntriesConnection", "pageInfo", "endCursor")
+
+      second_page = DummySchema.execute(
+        "{ auditLogEntriesConnection(first: 2, after: \"#{cursor}\") { nodes { id } pageInfo { hasNextPage } } }",
+        context: {}
+      )
+      nodes = second_page.dig("data", "auditLogEntriesConnection", "nodes")
+      expect(nodes.size).to eq(1)
+      expect(second_page.dig("data", "auditLogEntriesConnection", "pageInfo", "hasNextPage")).to be false
+    end
+
+    it "orders by created_at DESC" do
+      result = DummySchema.execute("{ auditLogEntriesConnection { nodes { event } } }", context: {})
+      entries = result.dig("data", "auditLogEntriesConnection", "nodes")
+      expect(entries.first["event"]).to eq("update")
+    end
+  end
+
   describe "auditLogEntry" do
     it "returns a single entry by id" do
       entry_id = RailsAuditLog::AuditLogEntry.first.id.to_s
@@ -77,9 +127,17 @@ RSpec.describe "auditLogEntries queries" do
       RailsAuditLog.instance_variable_set(:@authenticate, nil)
     end
 
-    it "raises Unauthorized when block returns falsy" do
+    it "raises Unauthorized on auditLogEntries when block returns falsy" do
       result = DummySchema.execute(
         "{ auditLogEntries { id } }",
+        context: {current_user: nil}
+      )
+      expect(result["errors"].first["message"]).to eq("Unauthorized")
+    end
+
+    it "raises Unauthorized on auditLogEntriesConnection when block returns falsy" do
+      result = DummySchema.execute(
+        "{ auditLogEntriesConnection { nodes { id } } }",
         context: {current_user: nil}
       )
       expect(result["errors"].first["message"]).to eq("Unauthorized")

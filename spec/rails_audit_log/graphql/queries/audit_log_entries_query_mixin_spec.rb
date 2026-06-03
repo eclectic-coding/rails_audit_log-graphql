@@ -80,6 +80,54 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
     end
   end
 
+  describe "auditLogEntriesConnection field" do
+    subject(:field) { fields.fetch("auditLogEntriesConnection") }
+
+    it "returns a non-null connection type" do
+      expect(field.type.to_type_signature).to eq("AuditLogEntryConnection!")
+    end
+
+    it "exposes exactly 8 arguments (4 filters + 4 cursor pagination)" do
+      expect(field.arguments.size).to eq(8)
+    end
+
+    describe "filter arguments" do
+      %w[event itemType].each do |arg_name|
+        it "has optional #{arg_name} String argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("String")
+        end
+      end
+
+      %w[itemId actorId].each do |arg_name|
+        it "has optional #{arg_name} ID argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("ID")
+        end
+      end
+    end
+
+    describe "cursor pagination arguments" do
+      %w[first last].each do |arg_name|
+        it "has optional #{arg_name} Int argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("Int")
+        end
+      end
+
+      %w[after before].each do |arg_name|
+        it "has optional #{arg_name} String argument" do
+          arg = field.arguments.fetch(arg_name)
+          expect(arg.type.non_null?).to be false
+          expect(arg.type.graphql_name).to eq("String")
+        end
+      end
+    end
+  end
+
   describe "resolver methods" do
     let(:graphql_context) { {} }
 
@@ -149,6 +197,32 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       end
     end
 
+    describe "#resolve_audit_log_entries_connection" do
+      it "returns the ordered scope when no filters given" do
+        expect(resolver.resolve_audit_log_entries_connection).to eq(scope)
+      end
+
+      it "filters by event" do
+        expect(scope).to receive(:where).with(event: "create").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(event: "create")
+      end
+
+      it "filters by item_type" do
+        expect(scope).to receive(:where).with(item_type: "Article").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(item_type: "Article")
+      end
+
+      it "filters by item_id" do
+        expect(scope).to receive(:where).with(item_id: "42").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(item_id: "42")
+      end
+
+      it "filters by actor_id" do
+        expect(scope).to receive(:where).with(actor_id: "7").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(actor_id: "7")
+      end
+    end
+
     describe "authentication" do
       before do
         allow(RailsAuditLog::AuditLogEntry).to receive(:find_by).and_return(nil)
@@ -164,6 +238,10 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         it "allows auditLogEntries through" do
           expect { resolver.resolve_audit_log_entries }.not_to raise_error
         end
+
+        it "allows auditLogEntriesConnection through" do
+          expect { resolver.resolve_audit_log_entries_connection }.not_to raise_error
+        end
       end
 
       context "when authenticate block returns truthy" do
@@ -175,6 +253,10 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
 
         it "allows auditLogEntries through" do
           expect { resolver.resolve_audit_log_entries }.not_to raise_error
+        end
+
+        it "allows auditLogEntriesConnection through" do
+          expect { resolver.resolve_audit_log_entries_connection }.not_to raise_error
         end
       end
 
@@ -188,6 +270,11 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
 
         it "raises GraphQL::ExecutionError for auditLogEntries" do
           expect { resolver.resolve_audit_log_entries }
+            .to raise_error(GraphQL::ExecutionError, "Unauthorized")
+        end
+
+        it "raises GraphQL::ExecutionError for auditLogEntriesConnection" do
+          expect { resolver.resolve_audit_log_entries_connection }
             .to raise_error(GraphQL::ExecutionError, "Unauthorized")
         end
       end
