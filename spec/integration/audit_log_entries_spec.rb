@@ -68,6 +68,24 @@ RSpec.describe "auditLogEntries queries" do
       expect(result.dig("data", "auditLogEntries")).to be_empty
     end
 
+    it "filters by touching" do
+      result = DummySchema.execute(
+        '{ auditLogEntries(touching: "title") { event } }',
+        context: {}
+      )
+      entries = result.dig("data", "auditLogEntries")
+      expect(entries).not_to be_empty
+      expect(entries.map { |e| e["event"] }).to all(satisfy { |ev| %w[create update].include?(ev) })
+    end
+
+    it "returns no entries when touching an attribute that was never changed" do
+      result = DummySchema.execute(
+        '{ auditLogEntries(touching: "nonexistent_attribute") { id } }',
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntries")).to be_empty
+    end
+
     it "returns entries within a time range" do
       before_time = (Time.now - 5).iso8601
       after_time = (Time.now + 5).iso8601
