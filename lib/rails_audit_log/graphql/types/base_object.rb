@@ -1,12 +1,9 @@
+# frozen_string_literal: true
+
 module RailsAuditLog
   module Graphql
-    VERSION: String
-
     module Types
       class BaseObject < GraphQL::Schema::Object
-      end
-
-      class AuditLogEntryType < BaseObject
       end
     end
   end

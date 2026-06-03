@@ -1,5 +1,7 @@
 ## [Unreleased]
 
-## [0.1.0] - 2026-06-02
+### Added
 
-- Initial release
+- `AuditLogEntryType` GraphQL object type exposing all 13 `RailsAuditLog::AuditLogEntry` fields
+- `BaseObject` base class for all gem GraphQL types
+
