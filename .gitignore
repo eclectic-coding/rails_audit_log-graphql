@@ -11,6 +11,9 @@
 /log/
 spec/dummy/log/
 spec/dummy/tmp/
+tspec/dummy/db/*.sqlite3
+spec/dummy/db/*.sqlite3-shm
+spec/dummy/db/*.sqlite3-wal
 
 # rspec failure tracking
 .rspec_status
