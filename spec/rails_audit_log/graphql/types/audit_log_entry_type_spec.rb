@@ -7,8 +7,8 @@ RSpec.describe RailsAuditLog::Graphql::Types::AuditLogEntryType do
     expect(described_class.graphql_name).to eq("AuditLogEntry")
   end
 
-  it "exposes exactly 13 fields" do
-    expect(fields.size).to eq(13)
+  it "exposes exactly 16 fields" do
+    expect(fields.size).to eq(16)
   end
 
   describe "non-null fields" do
@@ -67,5 +67,23 @@ RSpec.describe RailsAuditLog::Graphql::Types::AuditLogEntryType do
     field = fields.fetch("actorId")
     expect(field.type.non_null?).to be false
     expect(field.type.graphql_name).to eq("ID")
+  end
+
+  it "exposes actor as nullable AuditLogActor" do
+    field = fields.fetch("actor")
+    expect(field.type.non_null?).to be false
+    expect(field.type.graphql_name).to eq("AuditLogActor")
+  end
+
+  it "exposes auditedResource as non-null AuditedResource" do
+    field = fields.fetch("auditedResource")
+    expect(field.type.non_null?).to be true
+    expect(field.type.unwrap.graphql_name).to eq("AuditedResource")
+  end
+
+  it "exposes diff as nullable list of non-null AuditLogDiff" do
+    field = fields.fetch("diff")
+    expect(field.type.non_null?).to be false
+    expect(field.type.to_type_signature).to eq("[AuditLogDiff!]")
   end
 end

@@ -184,6 +184,67 @@ RSpec.describe "auditLogEntries queries" do
     end
   end
 
+  describe "actor field" do
+    it "returns actor id and typeName when an actor is present" do
+      result = DummySchema.execute(
+        '{ auditLogEntries(event: "create") { actor { id typeName } } }',
+        context: {}
+      )
+      entry = result.dig("data", "auditLogEntries").first
+      expect(entry["actor"]["id"]).to eq(user.id.to_s)
+      expect(entry["actor"]["typeName"]).to eq("User")
+    end
+
+    it "returns nil for entries with no actor" do
+      RailsAuditLog::AuditLogEntry.create!(
+        event: "create", item_type: "Post", item_id: 999
+      )
+      result = DummySchema.execute(
+        "{ auditLogEntries { actor { id typeName } } }",
+        context: {}
+      )
+      no_actor = result.dig("data", "auditLogEntries").find { |e| e["actor"].nil? }
+      expect(no_actor).not_to be_nil
+    end
+  end
+
+  describe "auditedResource field" do
+    it "returns the item type and id" do
+      result = DummySchema.execute(
+        "{ auditLogEntries { auditedResource { id typeName } } }",
+        context: {}
+      )
+      resources = result.dig("data", "auditLogEntries").map { |e| e["auditedResource"] }
+      expect(resources).to all(include("typeName" => "Post"))
+      expect(resources.map { |r| r["id"] }).to all(be_present)
+    end
+  end
+
+  describe "diff field" do
+    it "returns structured diffs for an update entry" do
+      result = DummySchema.execute(
+        '{ auditLogEntries(event: "update") { diff { attribute from to } } }',
+        context: {}
+      )
+      diffs = result.dig("data", "auditLogEntries").first["diff"]
+      title_diff = diffs.find { |d| d["attribute"] == "title" }
+      expect(title_diff["from"]).to eq("Second post")
+      expect(title_diff["to"]).to eq("Updated post")
+    end
+
+    it "returns nil diff for entries with no object_changes" do
+      RailsAuditLog::AuditLogEntry.create!(
+        event: "destroy", item_type: "Post", item_id: 1
+      )
+      result = DummySchema.execute(
+        '{ auditLogEntries(event: "destroy") { diff { attribute } } }',
+        context: {}
+      )
+      entry = result.dig("data", "auditLogEntries").first
+      expect(entry["diff"]).to be_nil
+    end
+  end
+
   describe "authentication" do
     around do |example|
       RailsAuditLog.authenticate { |ctx| ctx[:current_user] }
