@@ -39,6 +39,36 @@ gem "rails_audit_log-graphql"
 | `actorId` | `ID` | yes |
 | `tenantId` | `String` | yes |
 
+### AuditLogEntriesQueryMixin
+
+Include `RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin` into your app's `QueryType` to add two fields:
+
+```ruby
+# app/graphql/types/query_type.rb
+class Types::QueryType < Types::BaseObject
+  include RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin
+end
+```
+
+#### `auditLogEntry(id: ID!): AuditLogEntry`
+
+Fetch a single entry by ID. Returns `nil` if not found.
+
+#### `auditLogEntries(...): [AuditLogEntry!]!`
+
+List entries with optional filters and offset pagination.
+
+| Argument | Type | Default | Description |
+|---|---|---|---|
+| `event` | `String` | — | Filter by event type (`create`, `update`, `destroy`) |
+| `itemType` | `String` | — | Filter by audited model class name |
+| `itemId` | `ID` | — | Filter by audited record ID |
+| `actorId` | `ID` | — | Filter by actor ID |
+| `page` | `Int` | `1` | Page number (1-based) |
+| `perPage` | `Int` | `25` | Results per page |
+
+Results are ordered by `created_at DESC`.
+
 ## Development
 
 ```bash

@@ -9,5 +9,13 @@ module RailsAuditLog
       class AuditLogEntryType < BaseObject
       end
     end
+
+    module Queries
+      module AuditLogEntriesQueryMixin
+        def self.included: (untyped base) -> void
+        def resolve_audit_log_entry: (id: String) -> untyped
+        def resolve_audit_log_entries: (?event: String?, ?item_type: String?, ?item_id: String?, ?actor_id: String?, ?page: Integer, ?per_page: Integer) -> untyped
+      end
+    end
   end
 end
