@@ -21,6 +21,10 @@ A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`]
     - [auditLogEntries](#auditlogentries-auditlogentry)
     - [auditLogEntriesConnection](#auditlogentriesconnection-auditlogentryconnection)
   - [Authentication](#authentication)
+  - [Subscriptions](#subscriptions)
+    - [AuditLogSubscriptionsMixin](#auditlogsubscriptionsmixin)
+    - [auditLogEntryCreated](#auditlogentrycreated)
+    - [Broadcaster](#broadcaster)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -214,6 +218,84 @@ end
 ```
 
 If no authenticate block is set, all queries are permitted.
+
+[↑ Back to top](#table-of-contents)
+
+### Subscriptions
+
+Requires Action Cable in the host application.
+
+#### AuditLogSubscriptionsMixin
+
+Include `RailsAuditLog::Graphql::Subscriptions::AuditLogSubscriptionsMixin` into your app's `SubscriptionType` to add the `auditLogEntryCreated` field. Your schema must also use `GraphQL::Subscriptions::ActionCableSubscriptions`.
+
+```ruby
+# app/graphql/types/subscription_type.rb
+class Types::SubscriptionType < Types::BaseObject
+  include RailsAuditLog::Graphql::Subscriptions::AuditLogSubscriptionsMixin
+end
+
+# app/graphql/my_schema.rb
+class MySchema < GraphQL::Schema
+  query Types::QueryType
+  subscription Types::SubscriptionType
+  use GraphQL::Subscriptions::ActionCableSubscriptions
+end
+```
+
+#### `auditLogEntryCreated`
+
+Fires when a new `RailsAuditLog::AuditLogEntry` is created. Accepts one of two argument combinations:
+
+| Argument | Type | Description |
+|---|---|---|
+| `itemType` | `String` | Model class name to scope the subscription to |
+| `itemId` | `ID` | Record ID to scope the subscription to |
+| `actorId` | `ID` | Actor ID — subscribe to all entries by a specific actor |
+
+Subscribe to all changes on a specific record:
+
+```graphql
+subscription {
+  auditLogEntryCreated(itemType: "Post", itemId: "42") {
+    id
+    event
+    diff { attribute from to }
+  }
+}
+```
+
+Subscribe to all entries by a specific actor:
+
+```graphql
+subscription {
+  auditLogEntryCreated(actorId: "7") {
+    id
+    event
+    itemType
+    itemId
+  }
+}
+```
+
+#### Broadcaster
+
+`RailsAuditLog::Graphql::Subscriptions::Broadcaster` bridges `ActiveSupport::Notifications` (fired by `RailsAuditLog::Streaming::NotificationsAdapter` or `ActiveJobAdapter`) to GraphQL subscription triggers. Start it in an initializer:
+
+```ruby
+# config/initializers/rails_audit_log_graphql.rb
+RailsAuditLog.configure do |c|
+  c.streaming_adapter = RailsAuditLog::Streaming::NotificationsAdapter.new
+end
+
+Rails.application.config.after_initialize do
+  RailsAuditLog::Graphql::Subscriptions::Broadcaster.new(schema: MySchema).start
+end
+```
+
+For each entry, the broadcaster triggers:
+- `auditLogEntryCreated(itemType:, itemId:)` — notifies record-specific subscribers
+- `auditLogEntryCreated(actorId:)` — notifies actor-specific subscribers (when an actor is present)
 
 [↑ Back to top](#table-of-contents)
 
