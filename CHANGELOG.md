@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-04
+
 ### Added
 
 - `AuditLogEntryCreated` subscription — `auditLogEntryCreated(itemType:, itemId:)` subscribes to new entries for a specific record; `auditLogEntryCreated(actorId:)` subscribes to all entries by a specific actor
