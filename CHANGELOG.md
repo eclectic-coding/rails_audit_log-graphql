@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.1] - 2026-06-04
+
 ### Added
 
 - `actorType:` filter argument on `auditLogEntries`, `auditLogEntriesConnection`, and `auditLogEntriesCount` — filter by actor model class name (e.g. `"User"`)
