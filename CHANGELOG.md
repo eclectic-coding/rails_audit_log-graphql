@@ -1,5 +1,12 @@
 ## [Unreleased]
 
+### Added
+
+- `AuditLogEntryCreated` subscription — `auditLogEntryCreated(itemType:, itemId:)` subscribes to new entries for a specific record; `auditLogEntryCreated(actorId:)` subscribes to all entries by a specific actor
+- `AuditLogSubscriptionsMixin` — include into host app's `SubscriptionType` to add the `auditLogEntryCreated` subscription field
+- `BaseSubscription` base class for all gem GraphQL subscription types
+- `Broadcaster` — call `Broadcaster.new(schema: MySchema).start` in an initializer to relay `rails_audit_log.entry_created` `ActiveSupport::Notifications` events into GraphQL subscription triggers; supports `stop` to unsubscribe
+
 ## [0.3.0] - 2026-06-03
 
 ### Added

@@ -4,16 +4,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ---
 
-## 0.4.0 — Subscriptions
-
-Requires Action Cable in the host application.
-
-- **`auditLogEntryCreated(itemType:, itemId:)`** — subscribe to new entries for a specific record
-- **`auditLogEntryCreated(actorId:)`** — subscribe to all entries by a specific actor
-- Hooks into `RailsAuditLog::Streaming::NotificationsAdapter` to trigger broadcasts
-
----
-
 ## 0.5.0 — Multi-tenancy & Advanced Filtering
 
 - **Tenant scoping** — automatically scope queries via `RailsAuditLog.current_tenant` when configured

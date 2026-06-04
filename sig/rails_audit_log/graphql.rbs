@@ -6,6 +6,9 @@ module RailsAuditLog
       class BaseObject < GraphQL::Schema::Object
       end
 
+      class BaseSubscription < GraphQL::Schema::Subscription
+      end
+
       class DiffType < BaseObject
         def attribute: () -> String
         def from: () -> untyped
@@ -48,6 +51,24 @@ module RailsAuditLog
           def inject_mixin: () -> void
           def print_next_steps: () -> void
         end
+      end
+    end
+
+    module Subscriptions
+      class AuditLogEntryCreated < Types::BaseSubscription
+        def subscribe: (?item_type: String?, ?item_id: String?, ?actor_id: String?) -> :no_response
+        def update: (?item_type: String?, ?item_id: String?, ?actor_id: String?) -> untyped
+      end
+
+      module AuditLogSubscriptionsMixin
+        def self.included: (untyped base) -> void
+      end
+
+      class Broadcaster
+        def initialize: (schema: untyped) -> void
+        def start: () -> void
+        def stop: () -> void
+        def broadcast: (untyped entry) -> void
       end
     end
 
