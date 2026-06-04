@@ -43,12 +43,12 @@ RSpec.describe RailsAuditLog::Graphql::Types::AuditLogEntryType do
     end
   end
 
-  describe "nullable JSON fields" do
+  describe "nullable AuditLogJson fields" do
     %w[objectChanges object metadata].each do |field_name|
-      it "exposes #{field_name} as nullable JSON" do
+      it "exposes #{field_name} as nullable AuditLogJson" do
         field = fields.fetch(field_name)
         expect(field.type.non_null?).to be false
-        expect(field.type.graphql_name).to eq("JSON")
+        expect(field.type.graphql_name).to eq("AuditLogJson")
       end
     end
   end

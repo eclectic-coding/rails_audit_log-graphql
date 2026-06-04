@@ -59,6 +59,18 @@ module RailsAuditLog
           end
 
           base.field(
+            :audit_log_reify,
+            GraphQL::Types::JSON,
+            null: true,
+            description: "Reconstruct the attribute state of a record at a given point in time. Returns nil when no entry exists at or before `at`, or when the record was destroyed.",
+            resolver_method: :resolve_audit_log_reify
+          ) do
+            argument :item_type, String, required: true, description: "The audited model class name."
+            argument :item_id, GraphQL::Types::ID, required: true, description: "The audited record ID."
+            argument :at, GraphQL::Types::ISO8601DateTime, required: true, description: "Reconstruct state as of this time."
+          end
+
+          base.field(
             :audit_log_entries_count,
             GraphQL::Types::Int,
             null: false,
@@ -87,6 +99,18 @@ module RailsAuditLog
         def resolve_audit_log_entries_connection(event: nil, item_type: nil, item_id: nil, actor_id: nil, since: nil, until_time: nil, touching: nil, order_by: nil, for_tenant: nil)
           check_authentication!
           build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, since: since, until_time: until_time, touching: touching, order_by: order_by, for_tenant: for_tenant)
+        end
+
+        def resolve_audit_log_reify(item_type:, item_id:, at:)
+          check_authentication!
+          entry = RailsAuditLog::AuditLogEntry
+            .where(item_type: item_type, item_id: item_id)
+            .where("created_at <= ?", at)
+            .order(created_at: :desc, id: :desc)
+            .first
+          return nil if entry.nil? || entry.event == "destroy"
+          to_attrs = (entry.object_changes || {}).transform_values { |v| v[1] }
+          entry.object.present? ? entry.object.merge(to_attrs) : to_attrs
         end
 
         def resolve_audit_log_entries_count(event: nil, item_type: nil, since: nil)

@@ -11,9 +11,9 @@ module RailsAuditLog
         field :event, String, null: false
         field :item_type, String, null: false
         field :item_id, GraphQL::Types::ID, null: false
-        field :object_changes, GraphQL::Types::JSON, null: true
-        field :object, GraphQL::Types::JSON, null: true, method_conflict_warning: false
-        field :metadata, GraphQL::Types::JSON, null: true
+        field :object_changes, Types::AuditLogJsonScalar, null: true
+        field :object, Types::AuditLogJsonScalar, null: true, method_conflict_warning: false
+        field :metadata, Types::AuditLogJsonScalar, null: true
         field :reason, String, null: true
         field :whodunnit_snapshot, String, null: true
         field :actor_type, String, null: true
