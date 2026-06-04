@@ -276,4 +276,67 @@ RSpec.describe "auditLogEntries queries" do
       expect(result["errors"]).to be_nil
     end
   end
+
+  describe "auditLogEntriesCount aggregation" do
+    it "returns the total count" do
+      result = DummySchema.execute("{ auditLogEntriesCount }", context: {})
+      expect(result.dig("data", "auditLogEntriesCount")).to eq(3)
+    end
+
+    it "filters by event" do
+      result = DummySchema.execute('{ auditLogEntriesCount(event: "create") }', context: {})
+      expect(result.dig("data", "auditLogEntriesCount")).to eq(2)
+    end
+
+    it "filters by itemType" do
+      result = DummySchema.execute('{ auditLogEntriesCount(itemType: "Post") }', context: {})
+      expect(result.dig("data", "auditLogEntriesCount")).to eq(3)
+    end
+
+    it "filters by since" do
+      future = (Time.now + 60).iso8601
+      result = DummySchema.execute(
+        "{ auditLogEntriesCount(since: \"#{future}\") }",
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntriesCount")).to eq(0)
+    end
+  end
+
+  describe "forTenant filtering" do
+    before do
+      RailsAuditLog.with_actor(user) do
+        post = Post.last
+        post.instance_variable_set(:@_audit_tenant, "acme")
+        RailsAuditLog::AuditLogEntry.create!(
+          event: "update",
+          item_type: "Post",
+          item_id: post.id,
+          tenant_id: "acme"
+        )
+      end
+    end
+
+    it "filters auditLogEntries by forTenant" do
+      result = DummySchema.execute(
+        '{ auditLogEntries(forTenant: "acme") { id } }',
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntries").size).to eq(1)
+    end
+
+    it "filters auditLogEntriesConnection by forTenant" do
+      result = DummySchema.execute(
+        '{ auditLogEntriesConnection(forTenant: "acme") { nodes { id } } }',
+        context: {}
+      )
+      expect(result.dig("data", "auditLogEntriesConnection", "nodes").size).to eq(1)
+    end
+
+    it "applies auto-tenant via RailsAuditLog.current_tenant" do
+      allow(RailsAuditLog).to receive(:current_tenant).and_return(-> { "acme" })
+      result = DummySchema.execute("{ auditLogEntriesCount }", context: {})
+      expect(result.dig("data", "auditLogEntriesCount")).to eq(1)
+    end
+  end
 end

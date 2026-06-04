@@ -32,6 +32,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         expect(arg.type.unwrap.graphql_name).to eq("ID")
       end
     end
+
+    it "has optional forTenant String argument" do
+      arg = field.arguments.fetch("forTenant")
+      expect(arg.type.non_null?).to be false
+      expect(arg.type.graphql_name).to eq("String")
+    end
   end
 
   describe "auditLogEntries field" do
@@ -41,8 +47,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("[AuditLogEntry!]!")
     end
 
-    it "exposes exactly 10 arguments" do
-      expect(field.arguments.size).to eq(10)
+    it "exposes exactly 11 arguments" do
+      expect(field.arguments.size).to eq(11)
     end
 
     describe "filter arguments" do
@@ -80,6 +86,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         arg = field.arguments.fetch("orderBy")
         expect(arg.type.non_null?).to be false
         expect(arg.type.graphql_name).to eq("AuditLogEntrySortInput")
+      end
+
+      it "has optional forTenant String argument" do
+        arg = field.arguments.fetch("forTenant")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("String")
       end
     end
 
@@ -107,8 +119,8 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       expect(field.type.to_type_signature).to eq("AuditLogEntryConnection!")
     end
 
-    it "exposes exactly 12 arguments (8 filters + 4 cursor pagination)" do
-      expect(field.arguments.size).to eq(12)
+    it "exposes exactly 13 arguments (9 filters + 4 cursor pagination)" do
+      expect(field.arguments.size).to eq(13)
     end
 
     describe "filter arguments" do
@@ -147,6 +159,12 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         expect(arg.type.non_null?).to be false
         expect(arg.type.graphql_name).to eq("AuditLogEntrySortInput")
       end
+
+      it "has optional forTenant String argument" do
+        arg = field.arguments.fetch("forTenant")
+        expect(arg.type.non_null?).to be false
+        expect(arg.type.graphql_name).to eq("String")
+      end
     end
 
     describe "cursor pagination arguments" do
@@ -168,6 +186,37 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
     end
   end
 
+  describe "auditLogEntriesCount field" do
+    subject(:field) { fields.fetch("auditLogEntriesCount") }
+
+    it "returns a non-null Int" do
+      expect(field.type.non_null?).to be true
+      expect(field.type.unwrap.graphql_name).to eq("Int")
+    end
+
+    it "exposes exactly 3 arguments" do
+      expect(field.arguments.size).to eq(3)
+    end
+
+    it "has optional event String argument" do
+      arg = field.arguments.fetch("event")
+      expect(arg.type.non_null?).to be false
+      expect(arg.type.graphql_name).to eq("String")
+    end
+
+    it "has optional itemType String argument" do
+      arg = field.arguments.fetch("itemType")
+      expect(arg.type.non_null?).to be false
+      expect(arg.type.graphql_name).to eq("String")
+    end
+
+    it "has optional since ISO8601DateTime argument" do
+      arg = field.arguments.fetch("since")
+      expect(arg.type.non_null?).to be false
+      expect(arg.type.graphql_name).to eq("ISO8601DateTime")
+    end
+  end
+
   describe "resolver methods" do
     let(:graphql_context) { {} }
 
@@ -184,10 +233,14 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
     before do
       stub_const("RailsAuditLog::AuditLogEntry", Class.new)
       allow(RailsAuditLog).to receive(:authenticate).and_return(nil)
+      allow(RailsAuditLog).to receive(:current_tenant).and_return(nil)
       allow(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :desc).and_return(scope)
+      allow(RailsAuditLog::AuditLogEntry).to receive(:all).and_return(scope)
       allow(scope).to receive(:where).and_return(scope)
+      allow(scope).to receive(:for_tenant).and_return(scope)
       allow(scope).to receive(:limit).and_return(scope)
       allow(scope).to receive(:offset).and_return(scope)
+      allow(scope).to receive(:count).and_return(0)
     end
 
     describe "#resolve_audit_log_entry" do
@@ -200,6 +253,19 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       it "returns nil when not found" do
         allow(RailsAuditLog::AuditLogEntry).to receive(:find_by).and_return(nil)
         expect(resolver.resolve_audit_log_entry(id: "999")).to be_nil
+      end
+
+      it "scopes to explicit forTenant" do
+        allow(scope).to receive(:find_by).and_return(nil)
+        expect(RailsAuditLog::AuditLogEntry).to receive(:for_tenant).with("acme").and_return(scope)
+        resolver.resolve_audit_log_entry(id: "1", for_tenant: "acme")
+      end
+
+      it "scopes to auto-tenant when current_tenant is configured" do
+        allow(RailsAuditLog).to receive(:current_tenant).and_return(-> { "corp" })
+        allow(scope).to receive(:find_by).and_return(nil)
+        expect(RailsAuditLog::AuditLogEntry).to receive(:for_tenant).with("corp").and_return(scope)
+        resolver.resolve_audit_log_entry(id: "1")
       end
     end
 
@@ -245,6 +311,17 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       it "filters by touching" do
         expect(scope).to receive(:where).with("object_changes LIKE ?", "%\"title\":%").and_return(scope)
         resolver.resolve_audit_log_entries(touching: "title")
+      end
+
+      it "filters by explicit for_tenant" do
+        expect(scope).to receive(:for_tenant).with("acme").and_return(scope)
+        resolver.resolve_audit_log_entries(for_tenant: "acme")
+      end
+
+      it "applies auto-tenant when current_tenant is configured" do
+        allow(RailsAuditLog).to receive(:current_tenant).and_return(-> { "corp" })
+        expect(scope).to receive(:for_tenant).with("corp").and_return(scope)
+        resolver.resolve_audit_log_entries
       end
 
       it "defaults to created_at DESC ordering" do
@@ -307,10 +384,50 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         resolver.resolve_audit_log_entries_connection(touching: "title")
       end
 
+      it "filters by explicit for_tenant" do
+        expect(scope).to receive(:for_tenant).with("acme").and_return(scope)
+        resolver.resolve_audit_log_entries_connection(for_tenant: "acme")
+      end
+
+      it "applies auto-tenant when current_tenant is configured" do
+        allow(RailsAuditLog).to receive(:current_tenant).and_return(-> { "corp" })
+        expect(scope).to receive(:for_tenant).with("corp").and_return(scope)
+        resolver.resolve_audit_log_entries_connection
+      end
+
       it "applies a custom order_by" do
         sort = double("sort", field: :created_at, direction: :asc)
         expect(RailsAuditLog::AuditLogEntry).to receive(:order).with(created_at: :asc).and_return(scope)
         resolver.resolve_audit_log_entries_connection(order_by: sort)
+      end
+    end
+
+    describe "#resolve_audit_log_entries_count" do
+      it "returns a count" do
+        expect(scope).to receive(:count).and_return(42)
+        expect(resolver.resolve_audit_log_entries_count).to eq(42)
+      end
+
+      it "filters by event" do
+        expect(scope).to receive(:where).with(event: "create").and_return(scope)
+        resolver.resolve_audit_log_entries_count(event: "create")
+      end
+
+      it "filters by item_type" do
+        expect(scope).to receive(:where).with(item_type: "Post").and_return(scope)
+        resolver.resolve_audit_log_entries_count(item_type: "Post")
+      end
+
+      it "filters by since" do
+        t = Time.now
+        expect(scope).to receive(:where).with("created_at >= ?", t).and_return(scope)
+        resolver.resolve_audit_log_entries_count(since: t)
+      end
+
+      it "applies auto-tenant when current_tenant is configured" do
+        allow(RailsAuditLog).to receive(:current_tenant).and_return(-> { "corp" })
+        expect(scope).to receive(:for_tenant).with("corp").and_return(scope)
+        resolver.resolve_audit_log_entries_count
       end
     end
 
@@ -333,6 +450,10 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
         it "allows auditLogEntriesConnection through" do
           expect { resolver.resolve_audit_log_entries_connection }.not_to raise_error
         end
+
+        it "allows auditLogEntriesCount through" do
+          expect { resolver.resolve_audit_log_entries_count }.not_to raise_error
+        end
       end
 
       context "when authenticate block returns truthy" do
@@ -348,6 +469,10 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
 
         it "allows auditLogEntriesConnection through" do
           expect { resolver.resolve_audit_log_entries_connection }.not_to raise_error
+        end
+
+        it "allows auditLogEntriesCount through" do
+          expect { resolver.resolve_audit_log_entries_count }.not_to raise_error
         end
       end
 
@@ -366,6 +491,11 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
 
         it "raises GraphQL::ExecutionError for auditLogEntriesConnection" do
           expect { resolver.resolve_audit_log_entries_connection }
+            .to raise_error(GraphQL::ExecutionError, "Unauthorized")
+        end
+
+        it "raises GraphQL::ExecutionError for auditLogEntriesCount" do
+          expect { resolver.resolve_audit_log_entries_count }
             .to raise_error(GraphQL::ExecutionError, "Unauthorized")
         end
       end

@@ -20,6 +20,8 @@ A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`]
     - [auditLogEntry](#auditlogentryid-id-auditlogentry)
     - [auditLogEntries](#auditlogentries-auditlogentry)
     - [auditLogEntriesConnection](#auditlogentriesconnection-auditlogentryconnection)
+    - [auditLogEntriesCount](#auditlogentriescount-int)
+    - [Tenant scoping](#tenant-scoping)
   - [Authentication](#authentication)
   - [Subscriptions](#subscriptions)
     - [AuditLogSubscriptionsMixin](#auditlogsubscriptionsmixin)
@@ -152,6 +154,7 @@ List entries with optional filters and offset pagination.
 | `until` | `ISO8601DateTime` | — | Return entries created at or before this time |
 | `touching` | `String` | — | Filter to entries that changed a specific attribute |
 | `orderBy` | `AuditLogEntrySortInput` | `CREATED_AT DESC` | Sort field and direction |
+| `forTenant` | `String` | — | Scope to a specific tenant ID; overrides auto-tenant |
 | `page` | `Int` | `1` | Page number (1-based) |
 | `perPage` | `Int` | `25` | Results per page |
 
@@ -167,6 +170,7 @@ Same filters as `auditLogEntries`, but returns a [Relay-style connection](https:
 | `itemType` | `String` | Filter by audited model class name |
 | `itemId` | `ID` | Filter by audited record ID |
 | `actorId` | `ID` | Filter by actor ID |
+| `forTenant` | `String` | Scope to a specific tenant ID; overrides auto-tenant |
 | `first` | `Int` | Return the first N edges after `after` |
 | `after` | `String` | Cursor to paginate forward from |
 | `last` | `Int` | Return the last N edges before `before` |
@@ -203,6 +207,40 @@ Results are ordered by `created_at DESC`.
     pageInfo { hasNextPage endCursor }
   }
 }
+```
+
+[↑ Back to top](#table-of-contents)
+
+#### `auditLogEntriesCount(...): Int!`
+
+Returns the count of matching audit log entries. Respects auto-tenant when `RailsAuditLog.current_tenant` is configured.
+
+| Argument | Type | Description |
+|---|---|---|
+| `event` | `String` | Filter by event type (`create`, `update`, `destroy`) |
+| `itemType` | `String` | Filter by audited model class name |
+| `since` | `ISO8601DateTime` | Count entries created at or after this time |
+
+```graphql
+{ auditLogEntriesCount(event: "update", itemType: "Post") }
+```
+
+[↑ Back to top](#table-of-contents)
+
+#### Tenant scoping
+
+When `RailsAuditLog.current_tenant` is configured, all queries automatically filter to the current tenant:
+
+```ruby
+RailsAuditLog.configure do |c|
+  c.current_tenant { Current.tenant_id }
+end
+```
+
+To override or explicitly specify a tenant per query, use the `forTenant:` argument (available on `auditLogEntry`, `auditLogEntries`, and `auditLogEntriesConnection`):
+
+```graphql
+{ auditLogEntries(forTenant: "acme") { id event } }
 ```
 
 [↑ Back to top](#table-of-contents)

@@ -4,14 +4,6 @@ This gem adds a GraphQL API layer on top of [`rails_audit_log`](https://github.c
 
 ---
 
-## 0.5.0 — Multi-tenancy & Advanced Filtering
-
-- **Tenant scoping** — automatically scope queries via `RailsAuditLog.current_tenant` when configured
-- **`forTenant:` argument** — explicit tenant filter on `auditLogEntries`
-- **Aggregations** — `auditLogEntriesCount(event:, itemType:, since:)` for dashboard metrics
-
----
-
 ## 0.6.0 — Performance & Safety
 
 - **Dataloader batch loading** — batch-resolve polymorphic `actor` and `item` associations using graphql-ruby's `dataloader` to eliminate N+1 queries on list responses

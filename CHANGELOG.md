@@ -1,5 +1,11 @@
 ## [Unreleased]
 
+### Added
+
+- `forTenant:` argument on `auditLogEntry`, `auditLogEntries`, and `auditLogEntriesConnection` — explicitly scope results to a tenant ID; overrides auto-tenant
+- Auto-tenant scoping — when `RailsAuditLog.current_tenant` is configured, all queries automatically filter to the current tenant without requiring an explicit argument
+- `auditLogEntriesCount(event:, itemType:, since:)` — new aggregation query returning the count of matching entries; respects auto-tenant
+
 ## [0.4.0] - 2026-06-04
 
 ### Added

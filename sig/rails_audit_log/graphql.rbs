@@ -76,7 +76,7 @@ module RailsAuditLog
       module AuditLogEntriesQueryMixin
         def self.included: (untyped base) -> void
 
-        def resolve_audit_log_entry: (id: String) -> untyped
+        def resolve_audit_log_entry: (id: String, ?for_tenant: String?) -> untyped
 
         def resolve_audit_log_entries: (
           ?event: String?,
@@ -87,6 +87,7 @@ module RailsAuditLog
           ?until_time: Time?,
           ?touching: String?,
           ?order_by: InputObjects::AuditLogEntrySortInput?,
+          ?for_tenant: String?,
           ?page: Integer,
           ?per_page: Integer
         ) -> untyped
@@ -99,8 +100,15 @@ module RailsAuditLog
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
-          ?order_by: InputObjects::AuditLogEntrySortInput?
+          ?order_by: InputObjects::AuditLogEntrySortInput?,
+          ?for_tenant: String?
         ) -> untyped
+
+        def resolve_audit_log_entries_count: (
+          ?event: String?,
+          ?item_type: String?,
+          ?since: Time?
+        ) -> Integer
 
         private
 
@@ -112,7 +120,8 @@ module RailsAuditLog
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
-          ?order_by: InputObjects::AuditLogEntrySortInput?
+          ?order_by: InputObjects::AuditLogEntrySortInput?,
+          ?for_tenant: String?
         ) -> untyped
 
         def check_authentication!: () -> void
