@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.5.0] - 2026-06-04
+
 ### Added
 
 - `forTenant:` argument on `auditLogEntry`, `auditLogEntries`, and `auditLogEntriesConnection` — explicitly scope results to a tenant ID; overrides auto-tenant
