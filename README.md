@@ -29,6 +29,9 @@ A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`]
     - [AuditLogSubscriptionsMixin](#auditlogsubscriptionsmixin)
     - [auditLogEntryCreated](#auditlogentrycreated)
     - [Broadcaster](#broadcaster)
+- [Testing](#testing)
+  - [RSpec matchers](#rspec-matchers)
+  - [Minitest assertions](#minitest-assertions)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -385,6 +388,82 @@ end
 For each entry, the broadcaster triggers:
 - `auditLogEntryCreated(itemType:, itemId:)` — notifies record-specific subscribers
 - `auditLogEntryCreated(actorId:)` — notifies actor-specific subscribers (when an actor is present)
+
+[↑ Back to top](#table-of-contents)
+
+## Testing
+
+`rails_audit_log-graphql` ships test helpers for both RSpec and Minitest so you can
+assert that your mutations actually produce the expected audit log entries.
+
+Require the testing helpers from your test helper:
+
+```ruby
+# spec/spec_helper.rb or test/test_helper.rb
+require "rails_audit_log/graphql/testing"
+```
+
+### RSpec matchers
+
+Include `RailsAuditLog::Graphql::Testing::RSpecMatchers` in your configuration:
+
+```ruby
+RSpec.configure do |config|
+  config.include RailsAuditLog::Graphql::Testing::RSpecMatchers
+end
+```
+
+Then use `have_graphql_audit_entry` against any `GraphQL::Query::Result` (or plain hash) returned by `Schema.execute`:
+
+```ruby
+result = MySchema.execute('{ auditLogEntries { event diff { attribute } } }')
+
+# Assert an entry with a specific event exists
+expect(result).to have_graphql_audit_entry(:update)
+
+# Assert the update entry touched the :title attribute
+# (requires diff { attribute } in the query)
+expect(result).to have_graphql_audit_entry(:update).touching(:title)
+
+# Scope to a specific model
+expect(result).to have_graphql_audit_entry(:create).for_type("Post")
+
+# Combine chains
+expect(result).to have_graphql_audit_entry(:update).for_type("Post").touching(:title)
+```
+
+The matcher searches `auditLogEntries` and `auditLogEntriesConnection.nodes` in the
+response data.
+
+[↑ Back to top](#table-of-contents)
+
+### Minitest assertions
+
+Include `RailsAuditLog::Graphql::Testing::MinitestAssertions` in your test class:
+
+```ruby
+class ActiveSupport::TestCase
+  include RailsAuditLog::Graphql::Testing::MinitestAssertions
+end
+```
+
+Use `assert_graphql_audit_entry` and `refute_graphql_audit_entry`:
+
+```ruby
+result = MySchema.execute('{ auditLogEntries { event diff { attribute } } }')
+
+# Assert an update entry exists
+assert_graphql_audit_entry result, event: :update
+
+# Assert an update entry that touched :title
+assert_graphql_audit_entry result, event: :update, touching: :title
+
+# Assert no destroy entry exists
+refute_graphql_audit_entry result, event: :destroy
+
+# Custom failure message
+assert_graphql_audit_entry result, event: :update, message: "mutation should have created an update entry"
+```
 
 [↑ Back to top](#table-of-contents)
 
