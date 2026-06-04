@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-04
+
+### Added
+
+- **RSpec matcher** — `have_graphql_audit_entry(:update).touching(:title).for_type("Post")` for asserting audit entries in `Schema.execute` responses; include `RailsAuditLog::Graphql::Testing::RSpecMatchers` in your RSpec config
+- **Minitest assertions** — `assert_graphql_audit_entry` and `refute_graphql_audit_entry` with the same filter interface; include `RailsAuditLog::Graphql::Testing::MinitestAssertions` in your test class
+- Full YARD documentation on all public modules, classes, and methods
+- RBS type signatures for `Testing::RSpecMatchers` and `Testing::MinitestAssertions`
+
+### Changed
+
+- API stability guarantee — no breaking changes to public interfaces without a major version bump
+
 ## [0.6.1] - 2026-06-04
 
 ### Added
