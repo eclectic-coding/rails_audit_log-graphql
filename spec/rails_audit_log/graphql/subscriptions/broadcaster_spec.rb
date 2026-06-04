@@ -15,6 +15,20 @@ RSpec.describe RailsAuditLog::Graphql::Subscriptions::Broadcaster do
         ActiveSupport::Notifications.notifier.listening?("rails_audit_log.entry_created")
       ).to be true
     end
+
+    it "calls broadcast when a notification is fired" do
+      entry = RailsAuditLog::AuditLogEntry.new(item_type: "Post", item_id: 1)
+      allow(subscriptions).to receive(:trigger)
+      broadcaster.start
+
+      ActiveSupport::Notifications.instrument("rails_audit_log.entry_created", entry: entry)
+
+      expect(subscriptions).to have_received(:trigger).with(
+        "audit_log_entry_created",
+        {item_type: "Post", item_id: "1"},
+        entry
+      )
+    end
   end
 
   describe "#broadcast" do

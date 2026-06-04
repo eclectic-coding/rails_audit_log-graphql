@@ -14,14 +14,6 @@ module RailsAuditLog
           description: "Filter to entries by a specific actor ID."
 
         type Types::AuditLogEntryType, null: false
-
-        def subscribe(item_type: nil, item_id: nil, actor_id: nil)
-          :no_response
-        end
-
-        def update(item_type: nil, item_id: nil, actor_id: nil)
-          object
-        end
       end
     end
   end
