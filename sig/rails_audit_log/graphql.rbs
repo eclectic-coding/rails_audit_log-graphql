@@ -2,11 +2,27 @@ module RailsAuditLog
   module Graphql
     VERSION: String
 
+    @max_complexity: Integer
+    @max_depth: Integer
+    @default_max_page_size: Integer
+
+    def self.max_complexity: () -> Integer
+    def self.max_complexity=: (Integer) -> Integer
+    def self.max_depth: () -> Integer
+    def self.max_depth=: (Integer) -> Integer
+    def self.default_max_page_size: () -> Integer
+    def self.default_max_page_size=: (Integer) -> Integer
+
     module Types
       class BaseObject < GraphQL::Schema::Object
       end
 
       class BaseSubscription < GraphQL::Schema::Subscription
+      end
+
+      class AuditLogJsonScalar < GraphQL::Schema::Scalar
+        def self.coerce_input: (untyped value, untyped ctx) -> Hash[String, untyped]
+        def self.coerce_result: (untyped value, untyped ctx) -> untyped
       end
 
       class DiffType < BaseObject
@@ -18,11 +34,13 @@ module RailsAuditLog
       class ActorType < BaseObject
         def id: () -> String
         def type_name: () -> String
+        def record: () -> Hash[String, untyped]?
       end
 
       class AuditedResourceType < BaseObject
         def id: () -> String
         def type_name: () -> String
+        def record: () -> Hash[String, untyped]?
       end
 
       class AuditLogEntryType < BaseObject
@@ -52,6 +70,17 @@ module RailsAuditLog
           def print_next_steps: () -> void
         end
       end
+    end
+
+    module Sources
+      class RecordByIdSource < GraphQL::Dataloader::Source
+        def initialize: (String class_name) -> void
+        def fetch: (Array[String] ids) -> Array[Hash[String, untyped]?]
+      end
+    end
+
+    module SchemaPlugin
+      def self.included: (untyped base) -> void
     end
 
     module Subscriptions
@@ -103,6 +132,12 @@ module RailsAuditLog
           ?order_by: InputObjects::AuditLogEntrySortInput?,
           ?for_tenant: String?
         ) -> untyped
+
+        def resolve_audit_log_reify: (
+          item_type: String,
+          item_id: String,
+          at: Time
+        ) -> Hash[String, untyped]?
 
         def resolve_audit_log_entries_count: (
           ?event: String?,

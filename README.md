@@ -23,6 +23,8 @@ A [graphql-ruby](https://graphql-ruby.org) API layer for the [`rails_audit_log`]
     - [auditLogEntriesCount](#auditlogentriescount-int)
     - [Tenant scoping](#tenant-scoping)
   - [Authentication](#authentication)
+  - [SchemaPlugin](#schemaplugin)
+  - [auditLogReify](#auditlogreify)
   - [Subscriptions](#subscriptions)
     - [AuditLogSubscriptionsMixin](#auditlogsubscriptionsmixin)
     - [auditLogEntryCreated](#auditlogentrycreated)
@@ -256,6 +258,51 @@ end
 ```
 
 If no authenticate block is set, all queries are permitted.
+
+[↑ Back to top](#table-of-contents)
+
+### SchemaPlugin
+
+Include `RailsAuditLog::Graphql::SchemaPlugin` into your schema to enable query protection and dataloader batching in one step:
+
+```ruby
+class MySchema < GraphQL::Schema
+  include RailsAuditLog::Graphql::SchemaPlugin
+  query Types::QueryType
+end
+```
+
+This applies the following defaults (all overridable via `RailsAuditLog::Graphql.*=`):
+
+| Setting | Default | Description |
+|---|---|---|
+| `max_complexity` | `200` | Reject queries whose field-complexity sum exceeds this |
+| `max_depth` | `10` | Reject queries nested deeper than this |
+| `default_max_page_size` | `25` | Assumed page size for connection complexity calculation |
+
+Override in an initializer:
+
+```ruby
+RailsAuditLog::Graphql.max_complexity = 500
+RailsAuditLog::Graphql.max_depth = 15
+```
+
+The plugin also adds `AuditLogActor.record` and `AuditedResource.record` fields — nullable JSON fields that load the actual database record via `RecordByIdSource`, a `GraphQL::Dataloader::Source` that batches loads by class name to eliminate N+1 queries on list responses.
+
+[↑ Back to top](#table-of-contents)
+
+### `auditLogReify(itemType:, itemId:, at:): JSON`
+
+Reconstructs the attribute state of a record at a given point in time. Returns the attributes as JSON, or `nil` when no entry exists at or before `at` or the record was destroyed at that time.
+
+```graphql
+{
+  auditLogReify(itemType: "Post", itemId: "42", at: "2026-01-15T12:00:00Z") {
+    title
+    publishedAt
+  }
+}
+```
 
 [↑ Back to top](#table-of-contents)
 

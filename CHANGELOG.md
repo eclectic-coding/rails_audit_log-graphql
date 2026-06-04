@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+### Added
+
+- `AuditLogJsonScalar` (`AuditLogJson`) — custom scalar type for `objectChanges`, `object`, and `metadata` fields; replaces the generic `JSON` scalar with a self-documenting type
+- `RecordByIdSource` — `GraphQL::Dataloader::Source` that batch-loads AR records by class name and ID; eliminates N+1 queries when resolving `actor.record` and `auditedResource.record` on list responses
+- `record` field on `AuditLogActor` and `AuditedResource` — returns the database record as JSON, batch-loaded via dataloader
+- `auditLogReify(itemType:, itemId:, at:)` — reconstructs the attribute state of a record at a given point in time; returns `JSON` or `nil` when the record was destroyed or no entry exists
+- `SchemaPlugin` — include into host schema to apply `max_complexity` (200), `max_depth` (10), `default_max_page_size` (25), and `use GraphQL::Dataloader`; all limits configurable via `RailsAuditLog::Graphql.max_complexity=` etc.
+
 ## [0.5.0] - 2026-06-04
 
 ### Added

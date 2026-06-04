@@ -402,6 +402,39 @@ RSpec.describe RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin do
       end
     end
 
+    describe "#resolve_audit_log_reify" do
+      let(:entry) do
+        double("entry",
+          event: "update",
+          object_changes: {"title" => ["old", "new"]},
+          object: {"id" => 1, "title" => "old"})
+      end
+
+      before do
+        allow(RailsAuditLog::AuditLogEntry).to receive(:where).and_return(scope)
+        allow(scope).to receive(:order).and_return(scope)
+        allow(scope).to receive(:first).and_return(entry)
+      end
+
+      it "returns merged attributes from object and object_changes" do
+        at = Time.now
+        result = resolver.resolve_audit_log_reify(item_type: "Post", item_id: "1", at: at)
+        expect(result).to eq("id" => 1, "title" => "new")
+      end
+
+      it "returns nil when no entry found" do
+        allow(scope).to receive(:first).and_return(nil)
+        result = resolver.resolve_audit_log_reify(item_type: "Post", item_id: "1", at: Time.now)
+        expect(result).to be_nil
+      end
+
+      it "returns nil for destroy entries" do
+        allow(entry).to receive(:event).and_return("destroy")
+        result = resolver.resolve_audit_log_reify(item_type: "Post", item_id: "1", at: Time.now)
+        expect(result).to be_nil
+      end
+    end
+
     describe "#resolve_audit_log_entries_count" do
       it "returns a count" do
         expect(scope).to receive(:count).and_return(42)

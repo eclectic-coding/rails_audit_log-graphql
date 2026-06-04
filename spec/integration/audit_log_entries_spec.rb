@@ -277,6 +277,75 @@ RSpec.describe "auditLogEntries queries" do
     end
   end
 
+  describe "auditLogReify" do
+    it "returns the reconstructed attributes at a given time" do
+      post = Post.last
+      at = 1.minute.from_now.utc.iso8601
+
+      result = DummySchema.execute(
+        "{ auditLogReify(itemType: \"Post\", itemId: \"#{post.id}\", at: \"#{at}\") }",
+        context: {}
+      )
+      attrs = result.dig("data", "auditLogReify")
+      expect(attrs).not_to be_nil
+      expect(attrs).to have_key("title")
+    end
+
+    it "returns nil when no entry exists before the given time" do
+      past = "2000-01-01T00:00:00Z"
+      result = DummySchema.execute(
+        "{ auditLogReify(itemType: \"Post\", itemId: \"999\", at: \"#{past}\") }",
+        context: {}
+      )
+      expect(result.dig("data", "auditLogReify")).to be_nil
+    end
+  end
+
+  describe "dataloader record loading" do
+    it "returns actor record via batch-loaded field" do
+      result = DummySchema.execute(
+        "{ auditLogEntries { actor { record } } }",
+        context: {}
+      )
+      actors = result.dig("data", "auditLogEntries").map { |e| e["actor"] }
+      expect(actors).to all(include("record"))
+      expect(actors.first["record"]["name"]).to eq(user.name)
+    end
+
+    it "returns auditedResource record via batch-loaded field" do
+      result = DummySchema.execute(
+        "{ auditLogEntries { auditedResource { record } } }",
+        context: {}
+      )
+      resources = result.dig("data", "auditLogEntries").map { |e| e["auditedResource"] }
+      expect(resources).to all(include("record"))
+      expect(resources.first["record"]["title"]).to be_a(String)
+    end
+  end
+
+  describe "query complexity and depth limits" do
+    it "rejects queries that exceed max_complexity" do
+      # 13 unique scalar fields × 25 default_max_page_size = 325 > max_complexity(200)
+      fields = "id event itemType itemId objectChanges object metadata " \
+               "reason whodunnitSnapshot actorType actorId tenantId createdAt"
+      result = DummySchema.execute(
+        "{ auditLogEntriesConnection { nodes { #{fields} } } }",
+        context: {}
+      )
+      expect(result["errors"]).not_to be_nil
+      expect(result["errors"].first["message"]).to match(/complexity/i)
+    end
+
+    it "rejects queries that exceed max_depth" do
+      result = DummySchema.execute(
+        "{ auditLogEntries { actor { record } } }",
+        context: {},
+        max_depth: 2
+      )
+      expect(result["errors"]).not_to be_nil
+    end
+  end
+
   describe "auditLogEntriesCount aggregation" do
     it "returns the total count" do
       result = DummySchema.execute("{ auditLogEntriesCount }", context: {})
