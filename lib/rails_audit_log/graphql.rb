@@ -19,7 +19,24 @@ require_relative "graphql/subscriptions/audit_log_subscriptions_mixin"
 require_relative "graphql/subscriptions/broadcaster"
 require_relative "graphql/schema_plugin"
 
+# The top-level namespace for the rails_audit_log gem.
 module RailsAuditLog
+  # GraphQL API layer for rails_audit_log.
+  #
+  # Provides ready-made types, queries, subscriptions, and test helpers for
+  # exposing {https://github.com/eclectic-coding/rails_audit_log rails_audit_log}
+  # audit log entries through a graphql-ruby schema.
+  #
+  # == Configuration
+  #
+  # Override query-protection defaults in an initializer:
+  #
+  #   RailsAuditLog::Graphql.max_complexity      = 500
+  #   RailsAuditLog::Graphql.max_depth           = 15
+  #   RailsAuditLog::Graphql.default_max_page_size = 50
+  #
+  # These values are picked up by {SchemaPlugin} when it is included in the
+  # host schema.
   module Graphql
     class Error < StandardError; end
 
@@ -28,7 +45,23 @@ module RailsAuditLog
     @default_max_page_size = 25
 
     class << self
-      attr_accessor :max_complexity, :max_depth, :default_max_page_size
+      # Maximum allowed query complexity score.
+      # Queries whose field-complexity sum exceeds this value are rejected.
+      # Default: +200+.
+      # @return [Integer]
+      attr_accessor :max_complexity
+
+      # Maximum allowed query depth.
+      # Queries nested deeper than this value are rejected.
+      # Default: +10+.
+      # @return [Integer]
+      attr_accessor :max_depth
+
+      # Default maximum page size for Relay connections.
+      # Used by graphql-ruby when calculating connection complexity.
+      # Default: +25+.
+      # @return [Integer]
+      attr_accessor :default_max_page_size
     end
   end
 end
