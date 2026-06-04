@@ -1,5 +1,15 @@
 ## [Unreleased]
 
+### Added
+
+- `actorType:` filter argument on `auditLogEntries`, `auditLogEntriesConnection`, and `auditLogEntriesCount` — filter by actor model class name (e.g. `"User"`)
+- `forTenant:` argument on `auditLogReify` and `auditLogEntriesCount` — consistent tenant scoping across all query fields; both also respect `RailsAuditLog.current_tenant` auto-tenant
+
+### Changed
+
+- `auditLogReify` return type changed from generic `JSON` to `AuditLogJson` for consistency with other entry fields
+- `rails g rails_audit_log:graphql:install` now also injects `SchemaPlugin` into the host schema file (detected via `app/graphql/**/*schema*.rb` glob); `print_next_steps` updated to mention all available queries and the complexity config override
+
 ## [0.6.0] - 2026-06-04
 
 ### Added

@@ -152,6 +152,7 @@ List entries with optional filters and offset pagination.
 | `itemType` | `String` | — | Filter by audited model class name |
 | `itemId` | `ID` | — | Filter by audited record ID |
 | `actorId` | `ID` | — | Filter by actor ID |
+| `actorType` | `String` | — | Filter by actor model class name (e.g. `"User"`) |
 | `since` | `ISO8601DateTime` | — | Return entries created at or after this time |
 | `until` | `ISO8601DateTime` | — | Return entries created at or before this time |
 | `touching` | `String` | — | Filter to entries that changed a specific attribute |
@@ -172,6 +173,7 @@ Same filters as `auditLogEntries`, but returns a [Relay-style connection](https:
 | `itemType` | `String` | Filter by audited model class name |
 | `itemId` | `ID` | Filter by audited record ID |
 | `actorId` | `ID` | Filter by actor ID |
+| `actorType` | `String` | Filter by actor model class name (e.g. `"User"`) |
 | `forTenant` | `String` | Scope to a specific tenant ID; overrides auto-tenant |
 | `first` | `Int` | Return the first N edges after `after` |
 | `after` | `String` | Cursor to paginate forward from |
@@ -221,7 +223,9 @@ Returns the count of matching audit log entries. Respects auto-tenant when `Rail
 |---|---|---|
 | `event` | `String` | Filter by event type (`create`, `update`, `destroy`) |
 | `itemType` | `String` | Filter by audited model class name |
+| `actorType` | `String` | Filter by actor model class name (e.g. `"User"`) |
 | `since` | `ISO8601DateTime` | Count entries created at or after this time |
+| `forTenant` | `String` | Scope to a specific tenant ID; overrides auto-tenant |
 
 ```graphql
 { auditLogEntriesCount(event: "update", itemType: "Post") }
@@ -291,9 +295,9 @@ The plugin also adds `AuditLogActor.record` and `AuditedResource.record` fields 
 
 [↑ Back to top](#table-of-contents)
 
-### `auditLogReify(itemType:, itemId:, at:): JSON`
+### `auditLogReify(itemType:, itemId:, at:): AuditLogJson`
 
-Reconstructs the attribute state of a record at a given point in time. Returns the attributes as JSON, or `nil` when no entry exists at or before `at` or the record was destroyed at that time.
+Reconstructs the attribute state of a record at a given point in time. Returns the attributes as `AuditLogJson`, or `nil` when no entry exists at or before `at` or the record was destroyed at that time. Accepts `forTenant:` and respects auto-tenant.
 
 ```graphql
 {
