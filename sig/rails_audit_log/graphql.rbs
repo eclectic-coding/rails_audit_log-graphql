@@ -168,5 +168,38 @@ module RailsAuditLog
         def check_authentication!: () -> void
       end
     end
+
+    module Testing
+      module RSpecMatchers
+        def have_graphql_audit_entry: (Symbol | String event) -> HaveGraphqlAuditEntry
+
+        class HaveGraphqlAuditEntry
+          def initialize: (String event) -> void
+          def touching: (Symbol | String attribute) -> self
+          def for_type: (String item_type) -> self
+          def matches?: (untyped response) -> bool
+          def failure_message: () -> String
+          def failure_message_when_negated: () -> String
+        end
+      end
+
+      module MinitestAssertions
+        def assert_graphql_audit_entry: (
+          untyped response,
+          event: Symbol | String,
+          ?touching: (Symbol | String)?,
+          ?item_type: String?,
+          ?message: String?
+        ) -> void
+
+        def refute_graphql_audit_entry: (
+          untyped response,
+          event: Symbol | String,
+          ?touching: (Symbol | String)?,
+          ?item_type: String?,
+          ?message: String?
+        ) -> void
+      end
+    end
   end
 end

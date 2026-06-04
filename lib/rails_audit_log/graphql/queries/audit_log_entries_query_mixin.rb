@@ -3,7 +3,24 @@
 module RailsAuditLog
   module Graphql
     module Queries
+      # Mixin that adds all audit log query fields to a host application's +QueryType+.
+      #
+      # Include in your +QueryType+:
+      #
+      #   class Types::QueryType < Types::BaseObject
+      #     include RailsAuditLog::Graphql::Queries::AuditLogEntriesQueryMixin
+      #   end
+      #
+      # This adds the following fields to the schema:
+      # - +auditLogEntry(id:)+ — fetch a single entry by ID
+      # - +auditLogEntries(...)+ — offset-paginated list with filters
+      # - +auditLogEntriesConnection(...)+ — cursor-paginated Relay connection
+      # - +auditLogEntriesCount(...)+ — count matching entries
+      # - +auditLogReify(itemType:, itemId:, at:)+ — reconstruct record state at a point in time
+      #
+      # @see https://github.com/eclectic-coding/rails_audit_log-graphql README
       module AuditLogEntriesQueryMixin
+        # @api private
         def self.included(base)
           base.field(
             :audit_log_entry,
@@ -90,6 +107,11 @@ module RailsAuditLog
           end
         end
 
+        # Resolves the +auditLogEntry+ field.
+        #
+        # @param id [String] the entry ID
+        # @param for_tenant [String, nil] optional tenant scope
+        # @return [RailsAuditLog::AuditLogEntry, nil]
         def resolve_audit_log_entry(id:, for_tenant: nil)
           check_authentication!
           tenant_id = for_tenant || RailsAuditLog.current_tenant&.call
@@ -97,17 +119,31 @@ module RailsAuditLog
           base.find_by(id: id)
         end
 
+        # Resolves the +auditLogEntries+ field.
+        #
+        # @return [ActiveRecord::Relation]
         def resolve_audit_log_entries(event: nil, item_type: nil, item_id: nil, actor_id: nil, actor_type: nil, since: nil, until_time: nil, touching: nil, order_by: nil, for_tenant: nil, page: 1, per_page: 25)
           check_authentication!
           scope = build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, actor_type: actor_type, since: since, until_time: until_time, touching: touching, order_by: order_by, for_tenant: for_tenant)
           scope.limit(per_page).offset((page - 1) * per_page)
         end
 
+        # Resolves the +auditLogEntriesConnection+ field.
+        #
+        # @return [ActiveRecord::Relation]
         def resolve_audit_log_entries_connection(event: nil, item_type: nil, item_id: nil, actor_id: nil, actor_type: nil, since: nil, until_time: nil, touching: nil, order_by: nil, for_tenant: nil)
           check_authentication!
           build_scope(event: event, item_type: item_type, item_id: item_id, actor_id: actor_id, actor_type: actor_type, since: since, until_time: until_time, touching: touching, order_by: order_by, for_tenant: for_tenant)
         end
 
+        # Resolves the +auditLogReify+ field. Returns the reconstructed attribute
+        # hash for +item_type+/+item_id+ as of +at+, or +nil+ when no entry exists.
+        #
+        # @param item_type [String]
+        # @param item_id [String]
+        # @param at [Time]
+        # @param for_tenant [String, nil]
+        # @return [Hash, nil]
         def resolve_audit_log_reify(item_type:, item_id:, at:, for_tenant: nil)
           check_authentication!
           tenant_id = for_tenant || RailsAuditLog.current_tenant&.call
@@ -121,6 +157,9 @@ module RailsAuditLog
           entry.object.present? ? entry.object.merge(to_attrs) : to_attrs
         end
 
+        # Resolves the +auditLogEntriesCount+ field.
+        #
+        # @return [Integer]
         def resolve_audit_log_entries_count(event: nil, item_type: nil, actor_type: nil, since: nil, for_tenant: nil)
           check_authentication!
           scope = RailsAuditLog::AuditLogEntry.all
