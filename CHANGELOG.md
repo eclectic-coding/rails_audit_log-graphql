@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-04
+
 ### Added
 
 - `AuditLogJsonScalar` (`AuditLogJson`) — custom scalar type for `objectChanges`, `object`, and `metadata` fields; replaces the generic `JSON` scalar with a self-documenting type
