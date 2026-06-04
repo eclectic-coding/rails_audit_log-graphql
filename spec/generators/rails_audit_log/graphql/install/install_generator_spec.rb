@@ -49,4 +49,33 @@ RSpec.describe RailsAuditLog::Generators::Graphql::InstallGenerator do
       expect { run_generator }.not_to raise_error
     end
   end
+
+  context "when a schema file exists" do
+    before do
+      mkdir_p "#{destination_root}/app/graphql"
+      File.write("#{destination_root}/app/graphql/my_app_schema.rb", <<~RUBY)
+        # frozen_string_literal: true
+
+        class MyAppSchema < GraphQL::Schema
+        end
+      RUBY
+      run_generator
+    end
+
+    it "injects SchemaPlugin into the schema" do
+      content = File.read("#{destination_root}/app/graphql/my_app_schema.rb")
+      expect(content).to include("include RailsAuditLog::Graphql::SchemaPlugin")
+    end
+
+    it "places the include inside the schema class body" do
+      content = File.read("#{destination_root}/app/graphql/my_app_schema.rb")
+      expect(content).to match(/class MyAppSchema.*\n\s+include RailsAuditLog/m)
+    end
+  end
+
+  context "when no schema file exists" do
+    it "does not raise an error" do
+      expect { run_generator }.not_to raise_error
+    end
+  end
 end

@@ -112,6 +112,7 @@ module RailsAuditLog
           ?item_type: String?,
           ?item_id: String?,
           ?actor_id: String?,
+          ?actor_type: String?,
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
@@ -126,6 +127,7 @@ module RailsAuditLog
           ?item_type: String?,
           ?item_id: String?,
           ?actor_id: String?,
+          ?actor_type: String?,
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
@@ -136,13 +138,16 @@ module RailsAuditLog
         def resolve_audit_log_reify: (
           item_type: String,
           item_id: String,
-          at: Time
+          at: Time,
+          ?for_tenant: String?
         ) -> Hash[String, untyped]?
 
         def resolve_audit_log_entries_count: (
           ?event: String?,
           ?item_type: String?,
-          ?since: Time?
+          ?actor_type: String?,
+          ?since: Time?,
+          ?for_tenant: String?
         ) -> Integer
 
         private
@@ -152,6 +157,7 @@ module RailsAuditLog
           ?item_type: String?,
           ?item_id: String?,
           ?actor_id: String?,
+          ?actor_type: String?,
           ?since: Time?,
           ?until_time: Time?,
           ?touching: String?,
