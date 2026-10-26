@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Changed
+
+- Minimum supported Ruby is now 3.3 (`required_ruby_version >= 3.3.0`); Ruby 3.2 is no longer supported
+
 ## [1.0.0] - 2026-06-04
 
 ### Added
