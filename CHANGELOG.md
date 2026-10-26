@@ -1,16 +1,5 @@
 ## [Unreleased]
 
-### Added
-
-- Pre-push git hook (`.githooks/pre-push`, enabled by `bin/setup`) that runs the full `rake` suite
-- Weekly scheduled bundler-audit GitHub Actions workflow
-- Dependabot configuration for bundler and GitHub Actions updates (weekly)
-
-### Changed
-
-- Default `rake` task now runs `bundle:audit:update` and `bundle:audit:check` before lint and specs
-- Updated development dependencies `graphql` (2.6.13), `crass` (1.0.8) and `sqlite3` (2.10.1) to resolve security advisories
-
 ## [1.0.0] - 2026-06-04
 
 ### Added
