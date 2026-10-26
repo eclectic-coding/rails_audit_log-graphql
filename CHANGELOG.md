@@ -4,6 +4,7 @@
 
 - Pre-push git hook (`.githooks/pre-push`, enabled by `bin/setup`) that runs the full `rake` suite
 - Weekly scheduled bundler-audit GitHub Actions workflow
+- Dependabot configuration for bundler and GitHub Actions updates (weekly)
 
 ### Changed
 
