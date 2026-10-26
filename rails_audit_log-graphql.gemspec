@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Provides audit logging for GraphQL mutations and queries in Rails applications."
   spec.homepage = "https://github.com/eclectic-coding/rails_audit_log-graphql"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.3.0"
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/eclectic-coding/rails_audit_log-graphql"
