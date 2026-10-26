@@ -10,6 +10,8 @@ cd rails_audit_log-graphql
 bin/setup
 ```
 
+`bin/setup` also enables a pre-push hook (`git config core.hooksPath .githooks`) that runs `bundle exec rake` (bundler-audit, lint, tests) before every push. Bypass in an emergency with `git push --no-verify`.
+
 ## Running the Test Suite
 
 ```bash
