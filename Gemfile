@@ -16,4 +16,4 @@ end
 gem "rspec", "~> 3.0"
 gem "rspec-rails"
 gem "sqlite3"
-gem "standard", "~> 1.0"
+gem "standard", "~> 1.57"
